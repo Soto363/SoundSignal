@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sound Signal — The Earth Information Jukebox Accessible (NASA Space Apps Ipiales 2026)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-space: #040711;
+            --accent-cyan: #22d3ee;
+            --accent-amber: #fbbf24;
+            --accent-emerald: #34d399;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-space);
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--accent-amber) !important;
+            outline-offset: 2px !important;
+        }
+
+        body.high-contrast {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        /* Ocultar elementos invasivos del widget de Google Translate */
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+
+        .skiptranslate,
+        .goog-te-banner-frame,
+        #goog-gt-tt {
+            display: none !important;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.96);
+                box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.55);
+            }
+
+            70% {
+                transform: scale(1.02);
+                box-shadow: 0 0 0 12px rgba(34, 211, 238, 0);
+            }
+
+            100% {
+                transform: scale(0.96);
+                box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+            }
+        }
+
+        .lsc-ring {
+            animation: pulse-ring 2.2s infinite;
+        }
+
+        @keyframes live-blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        .live-dot {
+            animation: live-blink 1.4s infinite;
+        }
+
+        @keyframes lscUp {
+
+            0%,
+            100% {
+                transform: translateY(3px);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        @keyframes lscPulse {
+
+            0%,
+            100% {
+                transform: scale(0.95);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        .anim-lsc-up {
+            animation: lscUp 1.6s infinite ease-in-out;
+        }
+
+        .anim-lsc-pulse {
+            transform-origin: 50% 50%;
+            animation: lscPulse 1.8s infinite ease-in-out;
+        }
+
+        .satb-card-ring {
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between selection:bg-cyan-400 selection:text-slate-950">
+
+    <div id="lectorPantalla" class="sr-only" aria-live="assertive" aria-atomic="true">
+        Sound Signal initiated. Upload any image or video to get its real description using Artificial Intelligence in
+        English.
+    </div>
+
+    <header class="bg-slate-950/95 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md">
+        <div class="max-w-[1440px] mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-emerald-500 to-indigo-900 flex items-center justify-center shadow-md border border-cyan-300/40"
+                    aria-hidden="true">
+                    <!-- LOGO DE ONDAS / SEÑAL (SOUND SIGNAL) -->
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5.636 5.636a9 9 0 0 1 12.728 0M8.464 8.464a5 5 0 0 1 7.072 0M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
+                            SOUND SIGNAL — EARTH JUKEBOX ACCESSIBLE
+                        </h1>
+                        <span id="badgeEstadoAudio"
+                            class="text-[11px] font-mono-tech font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center gap-1.5">
+                            <span id="audioDot" class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+                            <span id="textoEstadoAudio">LIVE AUTO-JUKEBOX · 14 NEWTON COLORS</span>
+                        </span>
+                    </div>
+                    <!-- NUEVA DESCRIPCIÓN COMO SUBTÍTULO -->
+                    <p class="text-xs text-slate-400">
+                        Transforming satellite imagery into accessible symphonies and sign language.
+                    </p>
+                </div>
+            </div>
+
+            <!-- BOTONES DE TRADUCCIÓN -->
+            <div class="flex items-center gap-2">
+                <div id="google_translate_element" style="display:none;"></div>
+                <button id="btnTranslateES" type="button"
+                    class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span aria-hidden="true">🇪🇸</span> Traducir a Español
+                </button>
+                <button id="btnTranslateEN" type="button"
+                    class="hidden px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span aria-hidden="true">🇺🇸</span> Back to English
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section
+        class="bg-gradient-to-r from-slate-900 via-cyan-950/60 to-slate-900 border-b border-cyan-500/30 py-2.5 px-3 sm:px-6">
+        <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+                <p class="text-xs sm:text-sm font-bold text-cyan-100 flex items-center gap-2">
+                    <span aria-hidden="true">🚀</span>
+                    Resources shared from NASA's repository for project implementation.
+                </p>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[11px] font-mono-tech text-slate-400">NASA SVS Catalog:</span>
+                <button type="button" data-svs-idx="0" id="chipEscena-0"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-bold bg-cyan-500/30 text-cyan-200 border border-cyan-400 cursor-pointer">🌊
+                    Perpetual Ocean (5425)</button>
+                <button type="button" data-svs-idx="1" id="chipEscena-1"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">💨
+                    DYAMOND CO₂ (5196)</button>
+                <button type="button" data-svs-idx="2" id="chipEscena-2"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">🌫️
+                    Aerosols (5669)</button>
+                <button type="button" data-svs-idx="3" id="chipEscena-3"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">🏭
+                    Air Quality (5533)</button>
+                <button type="button" data-svs-idx="4" id="chipEscena-4"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">🌡️
+                    Currents/Temp (3912)</button>
+                <button type="button" data-svs-idx="5" id="chipEscena-5"
+                    class="svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 cursor-pointer">🟣
+                    Night Lights (5313)</button>
+            </div>
+        </div>
+    </section>
+
+    <main
+        class="max-w-[1440px] w-full mx-auto px-3 sm:px-6 py-4 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+        <!-- LEFT COLUMN -->
+        <section
+            class="lg:col-span-7 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+
+            <div
+                class="flex flex-wrap md:flex-nowrap items-center gap-3 bg-slate-950 p-2.5 rounded-xl border border-emerald-500/30">
+                <label for="inputSubirVideoNASA"
+                    class="flex-1 py-2 px-4 rounded-lg font-extrabold text-xs sm:text-sm bg-gradient-to-r from-emerald-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 shadow-md cursor-pointer text-center transition-all flex items-center justify-center gap-1.5 whitespace-nowrap">
+                    <span>📂 Upload the image you want to hear</span>
+                    <input id="inputSubirVideoNASA" type="file" accept="image/*,video/*" class="sr-only" />
+                </label>
+                <button type="button" id="btnAnalizarHF"
+                    class="py-2 px-4 rounded-lg font-bold text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 cursor-pointer transition-all whitespace-nowrap"
+                    title="Force a new analysis of the current image">
+                    🔄 Re-Analyze
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 flex-wrap mt-1">
+                <div>
+                    <h2 id="tituloEscenaActual" class="text-sm sm:text-base font-extrabold text-white">
+                        NASA SVS #5425 — Perpetual Ocean 2
+                    </h2>
+                </div>
+                <span id="badgePasoActual"
+                    class="text-xs font-mono-tech font-bold px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
+                    Step 1 / 145 (64s)
+                </span>
+            </div>
+
+            <div class="relative w-full aspect-[16/9] rounded-xl overflow-hidden border-2 border-slate-700 bg-slate-950 shadow-inner cursor-crosshair"
+                title="Click or drag over any coordinate of the satellite map to hear its natural chord and see its LSC sign">
+                <canvas id="mapa" width="720" height="405" class="w-full h-full block"></canvas>
+                <canvas id="overlayCanvas" width="720" height="405"
+                    class="w-full h-full block absolute inset-0 pointer-events-none"></canvas>
+                <div class="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none gap-2">
+                    <span id="hudModoCursor"
+                        class="px-2 py-0.5 rounded bg-slate-950/90 border border-cyan-400/40 text-[10px] font-mono-tech font-bold text-cyan-300">
+                        1. MRU MULTITRACK · 4 SATB CURSORS
+                    </span>
+                    <span id="hudCoordenadas"
+                        class="px-2 py-0.5 rounded bg-slate-950/90 border border-amber-400/50 text-[10px] font-mono-tech font-bold text-amber-300 flex items-center gap-1.5">
+                        <span id="swatchColorVivo" class="w-2.5 h-2.5 rounded-full inline-block border border-white"
+                            style="background:#22d3ee;"></span>
+                        <span id="textoCoordenadasVivo">x: 16 | y: 121 · Cyan · A m9</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div id="barraProgreso"
+                    class="h-full bg-gradient-to-r from-cyan-400 via-emerald-400 to-amber-400 transition-all duration-300"
+                    style="width: 1%;"></div>
+            </div>
+
+            <!-- CONTROLES DE REPRODUCCIÓN Y AJUSTES -->
+            <div
+                class="flex flex-wrap items-center gap-2 bg-slate-900/50 p-2 rounded-xl border border-slate-800/60 mt-1">
+                <button id="btnPlayPause" type="button"
+                    class="px-3 py-2 rounded-xl font-extrabold text-xs flex items-center gap-1.5 bg-gradient-to-r from-emerald-400 to-cyan-400 hover:from-emerald-300 hover:to-cyan-300 text-slate-950 shadow-md cursor-pointer transition-all">
+                    <span id="iconoPlayPause" aria-hidden="true">⏸️</span>
+                    <span id="textoPlayPause">Pause (Space)</span>
+                </button>
+
+                <button id="btnSiguienteEscena" type="button"
+                    class="px-2.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1 bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/50 cursor-pointer transition-all">
+                    <span aria-hidden="true">🎲</span>
+                    <span>Change (R)</span>
+                </button>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-cyan-500/40 rounded-xl px-2 py-1"
+                    title="Soft background accompaniment instrument (Key F)">
+                    <label for="selectorFondo" class="text-[10px] font-mono-tech text-cyan-300 font-bold">🎹 Background
+                        (F):</label>
+                    <select id="selectorFondo"
+                        class="bg-slate-950 text-cyan-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="acoustic_grand_piano-mp3" selected>🎹 Soft Piano (Bg)</option>
+                        <option value="pan_flute-mp3">🏔️ Andean Pan Flute</option>
+                        <option value="acoustic_guitar_nylon-mp3">🪕 Charango / Andean Guitar</option>
+                        <option value="orchestral_harp-mp3">🎐 Andean / Concert Harp</option>
+                        <option value="marimba-mp3">🪵 Acoustic Marimba</option>
+                        <option value="string_ensemble_1-mp3">🎻 Soft Strings (Pad)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-amber-500/40 rounded-xl px-2 py-1"
+                    title="Main instrument that stands out in color changes (Key M)">
+                    <label for="selectorCapaSinfa" class="text-[10px] font-mono-tech text-amber-300 font-bold">🎼
+                        Soloist (M):</label>
+                    <select id="selectorCapaSinfa"
+                        class="bg-slate-950 text-amber-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="auto_sinfonica" selected>✨ Auto Symphonic + Andean (Newton)</option>
+                        <option value="pan_flute-mp3">🏔️ Andean Pan Flute</option>
+                        <option value="acoustic_guitar_steel-mp3">🪕 Bright Andean Charango</option>
+                        <option value="vibraphone-mp3">🎐 Vibraphone</option>
+                        <option value="orchestral_harp-mp3">🪕 Concert Harp</option>
+                        <option value="flute-mp3">🪈 Transverse Flute</option>
+                        <option value="celesta-mp3">🔔 Celesta</option>
+                        <option value="marimba-mp3">🪵 Marimba</option>
+                        <option value="cello-mp3">🎻 Cello</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-emerald-500/40 rounded-xl px-2 py-1"
+                    title="Bass instrument for Cursor 4 (Key B)">
+                    <label for="selectorBajo" class="text-[10px] font-mono-tech text-emerald-300 font-bold">🎻 Bass
+                        (B):</label>
+                    <select id="selectorBajo"
+                        class="bg-slate-950 text-emerald-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="contrabass-mp3" selected>Contrabass</option>
+                        <option value="cello-mp3">Cello</option>
+                        <option value="acoustic_bass-mp3">Acoustic Bass</option>
+                        <option value="tuba-mp3">Tuba</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
+                    <label for="selectorModoRecorrido"
+                        class="text-[10px] font-mono-tech text-cyan-300 font-bold">Mode:</label>
+                    <select id="selectorModoRecorrido"
+                        class="bg-slate-950 text-cyan-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="1">1. MRU Multitrack (N/E/S)</option>
+                        <option value="2">2. ISS Orbital Spiral</option>
+                        <option value="3">3. Four Movements</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
+                    <label for="selectorDuracion"
+                        class="text-[10px] font-mono-tech text-amber-300 font-bold">⏱️(T):</label>
+                    <select id="selectorDuracion"
+                        class="bg-slate-950 text-amber-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="32">32s</option>
+                        <option value="64" selected>64s</option>
+                        <option value="120">120s</option>
+                        <option value="180">180s</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
+                    <label for="selectorTamanoCursor"
+                        class="text-[10px] font-mono-tech text-emerald-300 font-bold">🎯(C):</label>
+                    <select id="selectorTamanoCursor"
+                        class="bg-slate-950 text-emerald-200 font-mono-tech text-[11px] font-bold px-1.5 py-1 rounded border border-slate-700 cursor-pointer outline-none">
+                        <option value="2">2px</option>
+                        <option value="3" selected>3px</option>
+                        <option value="5">5px</option>
+                    </select>
+                </div>
+
+                <button id="btnVoz" type="button"
+                    class="px-2.5 py-2 rounded-xl font-bold text-[11px] bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/40 cursor-pointer transition-all ml-auto">
+                    🔊 Voice: ON (V)
+                </button>
+            </div>
+            <!-- FIN CONTROLES DE REPRODUCCIÓN -->
+
+            <div class="flex flex-col gap-1.5 mt-2 bg-slate-950/80 p-3 rounded-xl border border-emerald-500/20">
+                <div class="flex justify-between items-center mb-1">
+                    <label for="salidaTextoHuggingFace"
+                        class="text-xs font-mono-tech text-cyan-300 font-semibold flex items-center gap-1.5">
+                        <span>🤖 AI-generated description:</span>
+                        <span id="badgeEstadoHF"
+                            class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">✅
+                            Ready</span>
+                    </label>
+                    <span id="tiempoAnalisisIA" class="text-[10px] text-slate-400">Automatic upon file upload</span>
+                </div>
+                <textarea id="salidaTextoHuggingFace" rows="3" readonly
+                    class="w-full text-sm text-slate-100 bg-slate-900/95 p-3 rounded-lg border border-slate-700 focus:border-amber-400 font-medium leading-relaxed resize-y shadow-inner"
+                    placeholder="Upload any image or video using the green button above. The neural network will analyze its real content and write the description here in English."></textarea>
+            </div>
+
+        </section>
+
+        <!-- RIGHT COLUMN -->
+        <section
+            class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                <div>
+                    <h2 class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+                        <span aria-hidden="true">👐</span>
+                        <span>Colombian Sign Language (LSC)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Automatic synchronization (MP4 Video + Gesture SVG Vector + Facial Expression)
+                    </p>
+                </div>
+                <span id="nombreArchivoLSC"
+                    class="text-[11px] font-mono-tech px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/40">
+                    clips/5425.mp4
+                </span>
+            </div>
+
+            <div
+                class="relative w-full aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/70 border-2 border-cyan-500/40 flex flex-col items-center justify-center p-4 text-center shadow-inner">
+                <video id="reproductorVideoLSC" class="w-full h-full object-contain hidden rounded-lg bg-black/30" muted
+                    playsinline loop></video>
+                <div id="tarjetaRespaldoLSC" class="flex flex-col items-center justify-center gap-2 max-w-md">
+                    <div class="flex items-center gap-3">
+                        <div id="emojiLSC"
+                            class="w-14 h-14 rounded-2xl bg-slate-800/90 border border-cyan-400/50 flex items-center justify-center text-3xl shadow-lg lsc-ring">
+                            🌊</div>
+                        <div id="lscSvgStage"
+                            class="w-16 h-16 rounded-2xl bg-slate-950/80 border border-slate-700 flex items-center justify-center p-1">
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-wrap justify-center">
+                        <span
+                            class="text-[10px] font-mono-tech uppercase px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">Active
+                            LSC Interpreter</span>
+                        <span id="tonoExpresionLSC"
+                            class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30">Expression:
+                            Fluid and enveloping</span>
+                    </div>
+                    <h3 id="tituloEventoLSC" class="text-base sm:text-lg font-extrabold text-white">PERPETUAL OCEAN 2
+                    </h3>
+                    <p id="glosaLSC"
+                        class="text-xs font-mono-tech text-cyan-300 bg-slate-950/90 px-2.5 py-1 rounded border border-slate-800">
+                        LSC GLOSS: [OCEAN + CURRENTS + WORLD + THREE-DIMENSIONAL]</p>
+                </div>
+            </div>
+
+            <!-- OSCILOSCOPIO Y CONTROLES SATB (COLUMNA DERECHA) -->
+            <div class="bg-slate-950/95 border border-slate-800/90 rounded-xl p-2.5 shadow-inner flex flex-col gap-2">
+                <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+                    <span class="text-[10px] font-mono-tech font-bold text-cyan-300 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 live-dot"></span>
+                        LIVE OSCILLOSCOPE AND INDEPENDENT VOLUME OF 4 CURSORS (SATB)
+                    </span>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-1.5 bg-slate-900/90 border border-indigo-400/40 rounded-lg px-2 py-0.5"
+                            title="Regulates smoothing between sounds: 0% sharp changes | 100% silky transition (Key S)">
+                            <span class="text-[10px] font-mono-tech text-indigo-300 font-bold">🌊 Smoothing (S):</span>
+                            <button type="button" id="btnSuavizadoMenos"
+                                class="px-1.5 py-0.2 rounded bg-slate-800 hover:bg-slate-700 text-indigo-200 text-[10px] font-bold cursor-pointer">−</button>
+                            <input id="sliderSuavizado" type="range" min="0" max="100" value="35"
+                                class="w-16 accent-indigo-400 cursor-pointer h-1.5" />
+                            <button type="button" id="btnSuavizadoMas"
+                                class="px-1.5 py-0.2 rounded bg-slate-800 hover:bg-slate-700 text-indigo-200 text-[10px] font-bold cursor-pointer">+</button>
+                            <span id="labelSuavizado"
+                                class="text-[10px] font-mono-tech text-indigo-200 font-bold min-w-[78px] text-right">35%
+                                · Bal.</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-mono-tech text-slate-400">🎹 Bg. Vol:</span>
+                            <input id="sliderVolFondo" type="range" min="0" max="100" value="32"
+                                class="w-16 accent-cyan-400 cursor-pointer h-1.5"
+                                title="Adjust volume of the background accompaniment instrument" />
+                            <span id="labelVolFondo"
+                                class="text-[10px] font-mono-tech text-cyan-300 font-bold w-8">32%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative w-full h-14 rounded-lg overflow-hidden border border-slate-800 bg-[#03060f]">
+                    <canvas id="osciloscopioSATB" width="720" height="56" class="w-full h-full block"></canvas>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div id="cardCursorS"
+                        class="bg-slate-900/95 border border-amber-400/50 rounded-lg p-2 flex flex-col gap-1 transition-all">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[10px] font-mono-tech font-extrabold text-amber-300 truncate">● 1.
+                                Soprano</span>
+                            <button type="button" id="btnMuteS"
+                                class="px-1.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[10px] font-mono-tech font-bold cursor-pointer"
+                                title="Mute / Unmute Cursor 1 (Soprano)">🔊 <span id="valVolS">130%</span></button>
+                        </div>
+                        <div id="oscFreqS" class="text-[10px] font-mono-tech text-slate-200 truncate">523 Hz (C5) ·
+                            Soloist</div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <button type="button" data-voice="S" data-delta="-15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">−</button>
+                            <input id="sliderVolS" type="range" min="0" max="200" value="130"
+                                class="w-full accent-amber-400 cursor-pointer h-1.5" />
+                            <button type="button" data-voice="S" data-delta="15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">+</button>
+                        </div>
+                    </div>
+
+                    <div id="cardCursorA"
+                        class="bg-slate-900/95 border border-cyan-400/50 rounded-lg p-2 flex flex-col gap-1 transition-all">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[10px] font-mono-tech font-extrabold text-cyan-300 truncate">● 2.
+                                Contralto</span>
+                            <button type="button" id="btnMuteA"
+                                class="px-1.5 py-0.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-400/40 text-[10px] font-mono-tech font-bold cursor-pointer"
+                                title="Mute / Unmute Cursor 2 (Contralto)">🔊 <span id="valVolA">95%</span></button>
+                        </div>
+                        <div id="oscFreqA" class="text-[10px] font-mono-tech text-slate-200 truncate">330 Hz (E4) ·
+                            Chorus
+                            N</div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <button type="button" data-voice="A" data-delta="-15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">−</button>
+                            <input id="sliderVolA" type="range" min="0" max="200" value="95"
+                                class="w-full accent-cyan-400 cursor-pointer h-1.5" />
+                            <button type="button" data-voice="A" data-delta="15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">+</button>
+                        </div>
+                    </div>
+
+                    <div id="cardCursorT"
+                        class="bg-slate-900/95 border border-emerald-400/50 rounded-lg p-2 flex flex-col gap-1 transition-all">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[10px] font-mono-tech font-extrabold text-emerald-300 truncate">● 3.
+                                Tenor</span>
+                            <button type="button" id="btnMuteT"
+                                class="px-1.5 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 text-[10px] font-mono-tech font-bold cursor-pointer"
+                                title="Mute / Unmute Cursor 3 (Tenor)">🔊 <span id="valVolT">90%</span></button>
+                        </div>
+                        <div id="oscFreqT" class="text-[10px] font-mono-tech text-slate-200 truncate">220 Hz (A3) ·
+                            Chorus
+                            S</div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <button type="button" data-voice="T" data-delta="-15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">−</button>
+                            <input id="sliderVolT" type="range" min="0" max="200" value="90"
+                                class="w-full accent-emerald-400 cursor-pointer h-1.5" />
+                            <button type="button" data-voice="T" data-delta="15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">+</button>
+                        </div>
+                    </div>
+
+                    <div id="cardCursorB"
+                        class="bg-slate-900/95 border border-purple-400/50 rounded-lg p-2 flex flex-col gap-1 transition-all">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[10px] font-mono-tech font-extrabold text-purple-300 truncate">● 4.
+                                Bass</span>
+                            <button type="button" id="btnMuteB"
+                                class="px-1.5 py-0.5 rounded bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-400/40 text-[10px] font-mono-tech font-bold cursor-pointer"
+                                title="Mute / Unmute Cursor 4 (Bass)">🔊 <span id="valVolB">100%</span></button>
+                        </div>
+                        <div id="oscFreqB" class="text-[10px] font-mono-tech text-slate-200 truncate">65 Hz (C2) ·
+                            Anchor
+                        </div>
+                        <div class="flex items-center gap-1 mt-0.5">
+                            <button type="button" data-voice="B" data-delta="-15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">−</button>
+                            <input id="sliderVolB" type="range" min="0" max="200" value="100"
+                                class="w-full accent-purple-400 cursor-pointer h-1.5" />
+                            <button type="button" data-voice="B" data-delta="15"
+                                class="btn-step-vol px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold cursor-pointer">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN OSCILOSCOPIO -->
+
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800 bg-slate-950 py-2.5 px-3 sm:px-6 text-xs text-slate-400">
+        <div class="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <strong class="text-slate-200">Quick Controls:</strong>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">Space</kbd>
+                    Pause/Resume</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">S</kbd> Smoothing
+                    (0%–100%)</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">F</kbd> Change
+                    Background</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">M</kbd> Change
+                    Soloist</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">B</kbd> Change
+                    Bass</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">R</kbd> Next
+                    Scene</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">T</kbd>
+                    Duration</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">C</kbd>
+                    Cursor</span>
+                <span><kbd class="px-1.5 py-0.5 bg-slate-800 text-amber-300 rounded font-mono-tech">V</kbd> Voice</span>
+            </div>
+            <div class="font-mono-tech text-[11px]">
+                Sound Signal 360° · NASA Space Apps Ipiales 2026 · SVS: 5425, 5196, 5669, 5533, 3912, 5313
+            </div>
+        </div>
+    </footer>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'es,en',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        /* =======================================================================================
+         * BLOCK 1: SYMPHONIC + ANDEAN NEWTON'S 14 COLOR SCALE, SVS CATALOG AND LSC
+         * ======================================================================================= */
+
+        const ESCALA_NEWTON_14 = [
+            { idx: 0, hMin: 0, hMax: 14, hex: "#ef4444", nombre: "Red · C Maj9", bajo: "C2", quinta: "G2", acorde: ["C3", "E3", "G3", "B3"], notasMelodia: ["C4", "E4", "G4", "B4", "D5"], familiaSolista: "cuerdas", timbreNombre: "🎻 Dramatic Cello" },
+            { idx: 1, hMin: 15, hMax: 28, hex: "#f97316", nombre: "Vermilion · C6/E", bajo: "E2", quinta: "B2", acorde: ["E3", "G3", "A3", "C4"], notasMelodia: ["E4", "G4", "A4", "C5", "D5"], familiaSolista: "charango", timbreNombre: "🪕 Andean Charango" },
+            { idx: 2, hMin: 29, hMax: 42, hex: "#fb923c", nombre: "Orange · D m9", bajo: "D2", quinta: "A2", acorde: ["D3", "F3", "A3", "C4"], notasMelodia: ["D4", "F4", "A4", "C5", "E5"], familiaSolista: "zampona", timbreNombre: "🏔️ Andean Pan Flute" },
+            { idx: 3, hMin: 43, hMax: 55, hex: "#f59e0b", nombre: "Amber · D m11/F", bajo: "F2", quinta: "C3", acorde: ["F3", "G3", "A3", "C4"], notasMelodia: ["F4", "G4", "A4", "C5", "D5"], familiaSolista: "charango", timbreNombre: "🪕 Andean Charango" },
+            { idx: 4, hMin: 56, hMax: 72, hex: "#eab308", nombre: "Yellow · E m7", bajo: "E2", quinta: "B2", acorde: ["E3", "G3", "B3", "D4"], notasMelodia: ["E4", "G4", "B4", "D5", "E5"], familiaSolista: "metales", timbreNombre: "🎐 Golden Vibraphone" },
+            { idx: 5, hMin: 73, hMax: 98, hex: "#84cc16", nombre: "Lime · C Maj7/G", bajo: "G2", quinta: "D3", acorde: ["G3", "B3", "C4", "E4"], notasMelodia: ["G4", "A4", "B4", "C5", "E5"], familiaSolista: "zampona", timbreNombre: "🏔️ Andean Quena" },
+            { idx: 6, hMin: 99, hMax: 140, hex: "#22c55e", nombre: "Green · F Maj9", bajo: "F2", quinta: "C3", acorde: ["F3", "A3", "C4", "E4"], notasMelodia: ["F4", "A4", "C5", "E5", "G5"], familiaSolista: "maderas", timbreNombre: "🪈 Flute & Quena" },
+            { idx: 7, hMin: 141, hMax: 169, hex: "#10b981", nombre: "Emerald · G 6/9", bajo: "G2", quinta: "D3", acorde: ["G3", "A3", "B3", "D4"], notasMelodia: ["G4", "A4", "B4", "D5", "E5"], familiaSolista: "zampona", timbreNombre: "🏔️ Paramo Pan Flute" },
+            { idx: 8, hMin: 170, hMax: 194, hex: "#06b6d4", nombre: "Cyan · A m9", bajo: "A2", quinta: "E3", acorde: ["A3", "C4", "E4", "G4"], notasMelodia: ["E4", "G4", "A4", "C5", "E5"], familiaSolista: "arpa", timbreNombre: "🪕 Concert Harp" },
+            { idx: 9, hMin: 195, hMax: 215, hex: "#0ea5e9", nombre: "Turquoise · A m7/C", bajo: "C2", quinta: "G2", acorde: ["C3", "E3", "G3", "A3"], notasMelodia: ["E4", "G4", "A4", "C5", "D5"], familiaSolista: "metales", timbreNombre: "🎐 Vibraphone & Harp" },
+            { idx: 10, hMin: 216, hMax: 248, hex: "#3b82f6", nombre: "Blue · F Maj7#11", bajo: "F2", quinta: "C3", acorde: ["F3", "A3", "C4", "E4"], notasMelodia: ["C4", "E4", "G4", "A4", "C5"], familiaSolista: "arpa", timbreNombre: "🎐 Deep Harp" },
+            { idx: 11, hMin: 249, hMax: 278, hex: "#6366f1", nombre: "Indigo · E m9", bajo: "E2", quinta: "B2", acorde: ["E3", "G3", "B3", "D4"], notasMelodia: ["E4", "G4", "B4", "D5", "F#5"], familiaSolista: "metales", timbreNombre: "🔔 Celesta & Vibraphone" },
+            { idx: 12, hMin: 279, hMax: 315, hex: "#a855f7", nombre: "Violet · D Maj7/F#", bajo: "D2", quinta: "A2", acorde: ["F#3", "A3", "C#4", "D4"], notasMelodia: ["F#4", "A4", "B4", "D5", "E5"], familiaSolista: "charango", timbreNombre: "🪕 Nocturnal Charango" },
+            { idx: 13, hMin: 316, hMax: 360, hex: "#ec4899", nombre: "Magenta · G 13sus4", bajo: "G2", quinta: "D3", acorde: ["G3", "C4", "D4", "E4"], notasMelodia: ["D4", "G4", "A4", "C5", "E5"], familiaSolista: "cuerdas", timbreNombre: "🎻 Cello & Vibraphone" }
+        ];
+
+        const ESCENAS_NASA_SVS = [
+            { id: 5425, tipo: "ocean", titulo: "NASA SVS #5425 — Perpetual Ocean 2", descripcion: "Three-dimensional flow of the major global ocean currents." },
+            { id: 5196, tipo: "co2", titulo: "NASA SVS #5196 — DYAMOND Global Carbon Dioxide", descripcion: "Movement and concentration of atmospheric carbon dioxide." },
+            { id: 5669, tipo: "aerosols", titulo: "NASA SVS #5669 — GEOS Aerosols 2025", descripcion: "Map of Saharan dust, smoke, sea salt, and sulfates." },
+            { id: 5533, tipo: "airquality", titulo: "NASA SVS #5533 — Air Quality Model Runs", descripcion: "Global tracking of atmospheric pollutants such as ozone and smoke." },
+            { id: 3912, tipo: "currents", titulo: "NASA SVS #3912 — Global Sea Surface Currents and Temperature", descripcion: "Surface ocean currents colored by water temperature." },
+            { id: 5313, tipo: "night", titulo: "NASA SVS #5313 — Night Lights", descripcion: "Evolution of global night lights between 2012 and 2023. Purple indicates an increase and orange a decrease." }
+        ];
+
+        const CONTINENTES = [
+            [[75, 60], [175, 50], [215, 115], [170, 175], [135, 205], [105, 165], [65, 110]],
+            [[175, 215], [230, 230], [268, 280], [240, 375], [195, 398], [180, 330], [165, 255]],
+            [[325, 65], [415, 60], [435, 130], [395, 160], [435, 220], [425, 340], [375, 380], [340, 295], [305, 225], [315, 155]],
+            [[420, 60], [615, 65], [655, 140], [595, 215], [515, 235], [445, 175]],
+            [[555, 300], [640, 300], [655, 365], [575, 380]]
+        ];
+
+        const SVG_VECTORES_LSC = {
+            bosque: `<svg viewBox="0 0 80 80" class="w-12 h-12"><g class="anim-lsc-pulse"><circle cx="40" cy="32" r="18" fill="#10B981"/><path d="M40 66 L40 36" stroke="#FBBF24" stroke-width="5" stroke-linecap="round"/></g></svg>`,
+            fuego: `<svg viewBox="0 0 80 80" class="w-12 h-12"><g class="anim-lsc-up"><polygon points="40,12 66,64 14,64" fill="rgba(239,68,68,0.28)" stroke="#EF4444" stroke-width="3"/><circle cx="40" cy="48" r="8" fill="#FBBF24"/></g></svg>`,
+            oceano: `<svg viewBox="0 0 80 80" class="w-12 h-12"><g class="anim-lsc-up"><path d="M10 34 Q25 22 40 34 T70 34" fill="none" stroke="#38BDF8" stroke-width="4" stroke-linecap="round"/><path d="M10 52 Q25 40 40 52 T70 52" fill="none" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/></g></svg>`,
+            estable: `<svg viewBox="0 0 80 80" class="w-12 h-12"><g class="anim-lsc-pulse"><circle cx="40" cy="40" r="24" fill="#0B3D91" stroke="#38BDF8" stroke-width="3"/><path d="M26 40 L36 50 L56 30" fill="none" stroke="#34D399" stroke-width="4" stroke-linecap="round"/></g></svg>`
+        };
+
+        const BASE_DATOS_LSC = {
+            todo_normal: { id: "todo_normal", archivo: "clips/todo_normal.mp4", emoji: "✅", svg: SVG_VECTORES_LSC.estable, titulo: "Stable Zone / Normal Range", expresion: "Calm, gentle nod", glosa: "LSC GLOSS: [ZONE + STABLE + INDICATORS]", guion: "Stable zone. Normal environmental indicators." },
+            incendio_activo: { id: "incendio_activo", archivo: "clips/incendio_activo.mp4", emoji: "🔥", svg: SVG_VECTORES_LSC.fuego, titulo: "Active Fire Alert!", expresion: "High alert, urgency", glosa: "LSC GLOSS: [ALERT + FIRE + NASA SATELLITE]", guion: "Alert! Active heat spots." },
+            agua_abundante: { id: "agua_abundante", archivo: "clips/agua_abundante.mp4", emoji: "🌊", svg: SVG_VECTORES_LSC.oceano, titulo: "Oceans and Stable Water", expresion: "Fluid, serene", glosa: "LSC GLOSS: [DEEP OCEAN + CURRENTS]", guion: "Stable water resources." },
+            bosque_sano: { id: "bosque_sano", archivo: "clips/bosque_sano.mp4", emoji: "🌳", svg: SVG_VECTORES_LSC.bosque, titulo: "Healthy Biodiversity", expresion: "Positive, visual openness", glosa: "LSC GLOSS: [HEALTHY BIODIVERSITY + TREES]", guion: "Healthy biodiversity and dense forests." },
+            "5425": { id: "5425", archivo: "clips/5425.mp4", emoji: "🌊", svg: SVG_VECTORES_LSC.oceano, titulo: "Perpetual Ocean 2", expresion: "Expression: Fluid and enveloping", glosa: "LSC GLOSS: [OCEAN + CURRENTS + WORLD + THREE-DIMENSIONAL]", guion: "Three-dimensional flow of the major global ocean currents." },
+            "5196": { id: "5196", archivo: "clips/5196.mp4", emoji: "💨", svg: SVG_VECTORES_LSC.fuego, titulo: "DYAMOND Global Carbon Dioxide", expresion: "Expression: Expansive movement", glosa: "LSC GLOSS: [GAS + CARBON DIOXIDE + ATMOSPHERE + MOVE]", guion: "Movement and concentration of atmospheric carbon dioxide." },
+            "5669": { id: "5669", archivo: "clips/5669.mp4", emoji: "🌫️", svg: SVG_VECTORES_LSC.bosque, titulo: "GEOS Aerosols 2025", expresion: "Expression: Suspended elements", glosa: "LSC GLOSS: [DUST + SMOKE + SEA SALT + SULFATES + MAP]", guion: "Map of Saharan dust, smoke, sea salt, and sulfates." },
+            "5533": { id: "5533", archivo: "clips/5533.mp4", emoji: "🏭", svg: SVG_VECTORES_LSC.fuego, titulo: "Air Quality Model Runs", expresion: "Expression: Pollution alert", glosa: "LSC GLOSS: [POLLUTION + OZONE + SMOKE + TRACKING]", guion: "Global tracking of atmospheric pollutants such as ozone and smoke." },
+            "3912": { id: "3912", archivo: "clips/3912.mp4", emoji: "🌡️", svg: SVG_VECTORES_LSC.oceano, titulo: "Sea Surface Currents & Temp", expresion: "Expression: Changing temperature", glosa: "LSC GLOSS: [SEA + CURRENTS + TEMPERATURE + COLORS]", guion: "Surface ocean currents colored by water temperature." },
+            "5313": { id: "5313", archivo: "clips/5313.mp4", emoji: "🟣", svg: SVG_VECTORES_LSC.estable, titulo: "Night Lights (2012-2023)", expresion: "Expression: Light contrast", glosa: "LSC GLOSS: [NIGHT + LIGHTS + PURPLE INCREASE + ORANGE DECREASE]", guion: "Evolution of global night lights between 2012 and 2023. Purple indicates an increase and orange a decrease." }
+        };
+
+        /* =======================================================================================
+         * BLOCK 2: GLOBAL STATE AND INDEPENDENT VOLUMES OF THE 4 CURSORS
+         * ======================================================================================= */
+
+        const canvas = document.getElementById("mapa");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        const overlayCanvas = document.getElementById("overlayCanvas");
+        const overlayCtx = overlayCanvas.getContext("2d");
+        const oscCanvas = document.getElementById("osciloscopioSATB");
+        const oscCtx = oscCanvas.getContext("2d");
+
+        let indiceEscenaActual = 0;
+        let modoRecorrido = 1;
+        let duracionSegundos = 64;
+        let intervaloPulsoMs = 440;
+        let radioMicroCursor = 3;
+        let reproduciendo = true;
+        let vozActiva = true;
+        let pasoActual = 0;
+        let totalPasos = 145;
+        let intervaloJukebox = null;
+        let ultimoEventoLSC = "5425";
+        let semillaAleatoria = 1;
+        let arrastrandoMapa = false;
+
+        let animacionCursor60FPS = null;
+        let posicionSuaveLider = { x: 16, y: 121 };
+        let objetivoLider = { x: 16, y: 121 };
+        let timestampInicioPaso = performance.now();
+        let posicionAnteriorPaso = { x: 16, y: 121 };
+
+        const controlVocesSATB = {
+            S: { volPct: 130, muted: false, baseGain: 1.35 },
+            A: { volPct: 95, muted: false, baseGain: 0.90 },
+            T: { volPct: 90, muted: false, baseGain: 0.85 },
+            B: { volPct: 100, muted: false, baseGain: 0.95 }
+        };
+        let volFondoPct = 32;
+
+        let nivelSuavizado = 35;
+        let indiceSuavizadoAnterior14 = null;
+        let hslSuavizadoAnterior = null;
+
+        const estadoOndasSATB = [
+            { id: "S", nota: "C5", freqHz: 523.25, amp: 0.85, color: "#fbbf24", fase: 0 },
+            { id: "A", nota: "E4", freqHz: 329.63, amp: 0.65, color: "#22d3ee", fase: 1.2 },
+            { id: "T", nota: "A3", freqHz: 220.00, amp: 0.60, color: "#34d399", fase: 2.4 },
+            { id: "B", nota: "C2", freqHz: 65.41, amp: 0.75, color: "#c084fc", fase: 3.6 }
+        ];
+
+        let archivoSubidoPorUsuario = false;
+        let descripcionIADisponible = false;
+        let estadisticasMapa = { warmPct: 0, neutralPct: 0, coldPct: 0 };
+
+        let ultimaInterpretacionHF = "Pending image upload.";
+        let nombreRecursoActual = "";
+        let videoSatelitalActivo = null;
+        let animacionVideoId = null;
+
+        let pipelineVisionLocal = null;
+        let audioListo = false;
+
+        /* =======================================================================================
+         * BLOCK 3: MULTICOLOR SVS CARTOGRAPHIC ENGINE + 4 CURSORS
+         * ======================================================================================= */
+
+        function detenerVideoSatelitalSiExiste() {
+            if (animacionVideoId) { cancelAnimationFrame(animacionVideoId); animacionVideoId = null; }
+            if (videoSatelitalActivo) { videoSatelitalActivo.pause(); videoSatelitalActivo = null; }
+        }
+
+        function dibujarMapaCientificoMulticolor(escena, W, H) {
+            if (escena.tipo === "ocean") {
+                const grad = ctx.createLinearGradient(0, 0, W, H);
+                grad.addColorStop(0.0, "#1e3a8a");
+                grad.addColorStop(0.3, "#0284c7");
+                grad.addColorStop(0.6, "#0d9488");
+                grad.addColorStop(1.0, "#312e81");
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+                const coloresContinentes = ["#15803d", "#ca8a04", "#b45309", "#166534", "#9a3412"];
+                CONTINENTES.forEach((poly, idx) => {
+                    ctx.fillStyle = coloresContinentes[idx % coloresContinentes.length];
+                    ctx.beginPath();
+                    poly.forEach((pt, i) => i === 0 ? ctx.moveTo(pt[0], pt[1]) : ctx.lineTo(pt[0], pt[1]));
+                    ctx.closePath();
+                    ctx.fill();
+                });
+                const paletaCorrientes = ["#22d3ee", "#facc15", "#4ade80", "#f97316", "#f8fafc", "#a855f7", "#38bdf8"];
+                for (let i = 0; i < 36; i++) {
+                    ctx.strokeStyle = paletaCorrientes[i % paletaCorrientes.length];
+                    ctx.lineWidth = (i % 5 === 0) ? 4.5 : 3.0;
+                    ctx.beginPath();
+                    const yBase = 24 + ((i * 31) % (H - 48));
+                    const xInic = (i * 45) % (W * 0.4);
+                    ctx.moveTo(xInic, yBase);
+                    ctx.bezierCurveTo(W * 0.35, yBase - 48, W * 0.68, yBase + 48, W - 12, yBase);
+                    ctx.stroke();
+                }
+            } else if (escena.tipo === "currents") {
+                const grad = ctx.createLinearGradient(0, 0, 0, H);
+                grad.addColorStop(0.0, "#7e22ce");
+                grad.addColorStop(0.18, "#2563eb");
+                grad.addColorStop(0.35, "#10b981");
+                grad.addColorStop(0.50, "#ef4444");
+                grad.addColorStop(0.65, "#eab308");
+                grad.addColorStop(0.82, "#06b6d4");
+                grad.addColorStop(1.0, "#3b82f6");
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+            } else if (escena.tipo === "co2" || escena.tipo === "aerosols" || escena.tipo === "airquality") {
+                ctx.fillStyle = "#0f172a";
+                ctx.fillRect(0, 0, W, H);
+                const plumas = [
+                    [W * 0.18, H * 0.28, 95, "#ef4444"],
+                    [W * 0.38, H * 0.32, 92, "#f97316"],
+                    [W * 0.60, H * 0.28, 98, "#eab308"],
+                    [W * 0.82, H * 0.34, 88, "#ec4899"],
+                    [W * 0.24, H * 0.68, 94, "#22c55e"],
+                    [W * 0.50, H * 0.66, 96, "#10b981"],
+                    [W * 0.76, H * 0.68, 90, "#06b6d4"],
+                    [W * 0.45, H * 0.50, 82, "#3b82f6"]
+                ];
+                plumas.forEach(([cx, cy, r, col]) => {
+                    ctx.fillStyle = col;
+                    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+                });
+            } else {
+                ctx.fillStyle = "#090d1a";
+                ctx.fillRect(0, 0, W, H);
+                const focosNocturnos = [
+                    [W * 0.20, H * 0.30, 82, "#a855f7"],
+                    [W * 0.42, H * 0.34, 78, "#f59e0b"],
+                    [W * 0.66, H * 0.28, 86, "#ec4899"],
+                    [W * 0.82, H * 0.44, 74, "#eab308"],
+                    [W * 0.28, H * 0.68, 80, "#22c55e"],
+                    [W * 0.56, H * 0.66, 88, "#6366f1"],
+                    [W * 0.76, H * 0.72, 76, "#f97316"]
+                ];
+                focosNocturnos.forEach(([cx, cy, r, col]) => {
+                    ctx.fillStyle = col;
+                    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+                });
+            }
+
+            ctx.save();
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.24)";
+            ctx.lineWidth = 1.1;
+            CONTINENTES.forEach(poly => {
+                ctx.beginPath();
+                poly.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt[0], pt[1]) : ctx.lineTo(pt[0], pt[1]));
+                ctx.closePath();
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+
+        function dibujarEscenaNASA(escena, semilla = 1) {
+            detenerVideoSatelitalSiExiste();
+            archivoSubidoPorUsuario = false;
+            descripcionIADisponible = false;
+            nombreRecursoActual = escena.titulo;
+            const W = canvas.width;
+            const H = canvas.height;
+
+            const img = new Image();
+            img.src = `imagenes del universo/${escena.id}.jpg`;
+
+            img.onload = () => {
+                if (archivoSubidoPorUsuario) return;
+                ctx.clearRect(0, 0, W, H);
+                ctx.drawImage(img, 0, 0, W, H);
+                ctx.save();
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.22)";
+                ctx.lineWidth = 1.1;
+                CONTINENTES.forEach(poly => {
+                    ctx.beginPath();
+                    poly.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt[0], pt[1]) : ctx.lineTo(pt[0], pt[1]));
+                    ctx.closePath();
+                    ctx.stroke();
+                });
+                ctx.restore();
+                analizarMatrizGlobalMapa();
+            };
+
+            // MODIFICACIÓN: El mapa multicolor ahora SOLO se dibuja si la imagen no se encuentra.
+            // Esto elimina el "parpadeo" y superposición temporal de la imagen.
+            img.onerror = () => {
+                if (archivoSubidoPorUsuario) return;
+                ctx.clearRect(0, 0, W, H);
+                dibujarMapaCientificoMulticolor(escena, W, H);
+                analizarMatrizGlobalMapa();
+            };
+        }
+
+        function construirRacimoVocesCompacto(sx, sy) {
+            const W = canvas.width, H = canvas.height;
+            const clampX = (v) => Math.max(8, Math.min(W - 8, Math.round(v)));
+            const clampY = (v) => Math.max(8, Math.min(H - 8, Math.round(v)));
+
+            return [
+                { id: "S", x: clampX(sx), y: clampY(sy), colorHex: "#fbbf24" },
+                { id: "A", x: clampX(sx - 10), y: clampY(sy - 11), colorHex: "#22d3ee" },
+                { id: "T", x: clampX(sx + 10), y: clampY(sy + 11), colorHex: "#34d399" },
+                { id: "B", x: clampX(sx - 14), y: clampY(sy), colorHex: "#c084fc" }
+            ];
+        }
+
+        function dibujarMicroCursorEnOverlay(cx, cy) {
+            const W = overlayCanvas.width;
+            const H = overlayCanvas.height;
+            overlayCtx.clearRect(0, 0, W, H);
+
+            overlayCtx.save();
+            overlayCtx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+            overlayCtx.lineWidth = 1;
+            for (let i = 1; i < 3; i++) {
+                overlayCtx.beginPath(); overlayCtx.moveTo((W / 3) * i, 0); overlayCtx.lineTo((W / 3) * i, H); overlayCtx.stroke();
+                overlayCtx.beginPath(); overlayCtx.moveTo(0, (H / 3) * i); overlayCtx.lineTo(W, (H / 3) * i); overlayCtx.stroke();
+            }
+
+            if (modoRecorrido === 2) {
+                overlayCtx.strokeStyle = "rgba(34, 211, 238, 0.22)";
+                overlayCtx.setLineDash([4, 4]);
+                overlayCtx.beginPath();
+                for (let px = 10; px < W - 10; px += 6) {
+                    const prog = (px - 10) / (W - 20);
+                    const py = H / 2 + Math.sin(prog * Math.PI * 4) * (H * 0.26);
+                    px === 10 ? overlayCtx.moveTo(px, py) : overlayCtx.lineTo(px, py);
+                }
+                overlayCtx.stroke();
+                overlayCtx.setLineDash([]);
+            }
+
+            overlayCtx.strokeStyle = "rgba(34, 211, 238, 0.35)";
+            overlayCtx.lineWidth = 0.85;
+            overlayCtx.beginPath();
+            overlayCtx.moveTo(cx, 0);
+            overlayCtx.lineTo(cx, H);
+            overlayCtx.stroke();
+
+            const voces = construirRacimoVocesCompacto(cx, cy);
+
+            for (let i = voces.length - 1; i >= 0; i--) {
+                const v = voces[i];
+                const cfgVoz = controlVocesSATB[v.id];
+                const silenciada = cfgVoz.muted || cfgVoz.volPct === 0;
+                const esLider = (i === 0);
+                const r = esLider ? radioMicroCursor : Math.max(2, radioMicroCursor - 0.4);
+
+                overlayCtx.globalAlpha = silenciada ? 0.25 : 1.0;
+
+                overlayCtx.beginPath();
+                overlayCtx.arc(v.x, v.y, r + (esLider ? 2.6 : 1.6), 0, Math.PI * 2);
+                overlayCtx.lineWidth = esLider ? 1.3 : 1.0;
+                overlayCtx.strokeStyle = v.colorHex;
+                overlayCtx.stroke();
+
+                overlayCtx.beginPath();
+                overlayCtx.arc(v.x, v.y, r, 0, Math.PI * 2);
+                overlayCtx.fillStyle = esLider ? "#ffffff" : v.colorHex;
+                overlayCtx.fill();
+                overlayCtx.lineWidth = 0.8;
+                overlayCtx.strokeStyle = "#000000";
+                overlayCtx.stroke();
+            }
+
+            overlayCtx.restore();
+        }
+
+        function dibujarOsciloscopioCuatroOndas(ahoraMs) {
+            const W = oscCanvas.width;
+            const H = oscCanvas.height;
+            oscCtx.clearRect(0, 0, W, H);
+
+            oscCtx.strokeStyle = "rgba(34, 211, 238, 0.07)";
+            oscCtx.lineWidth = 1;
+            for (let x = 0; x < W; x += 60) {
+                oscCtx.beginPath(); oscCtx.moveTo(x, 0); oscCtx.lineTo(x, H); oscCtx.stroke();
+            }
+
+            const tSeg = ahoraMs * 0.001;
+            const analizadores = [analyserSoprano, analyserContralto, analyserTenor, analyserBajo];
+            const clavesVoz = ["S", "A", "T", "B"];
+
+            for (let vIdx = 0; vIdx < 4; vIdx++) {
+                const onda = estadoOndasSATB[vIdx];
+                const cfgVoz = controlVocesSATB[clavesVoz[vIdx]];
+                const factorVolumenUsuario = cfgVoz.muted ? 0 : (cfgVoz.volPct / 100);
+
+                const an = analizadores[vIdx];
+                let bufferAudio = null;
+                if (audioListo && an && factorVolumenUsuario > 0) {
+                    try { bufferAudio = an.getValue(); } catch (e) { bufferAudio = null; }
+                }
+
+                const yCentro = (H / 4.6) * (vIdx + 0.8);
+                const ciclosEnPantalla = Math.max(1.8, Math.min(10.5, onda.freqHz / 50));
+
+                oscCtx.save();
+                oscCtx.beginPath();
+                oscCtx.strokeStyle = onda.color;
+                oscCtx.globalAlpha = factorVolumenUsuario === 0 ? 0.25 : 0.95;
+                oscCtx.lineWidth = (vIdx === 0) ? 2.0 : 1.4;
+
+                for (let px = 0; px < W; px += 3) {
+                    const u = px / W;
+                    const envolvente = Math.sin(u * Math.PI);
+                    const senoidal =
+                        Math.sin(u * Math.PI * 2 * ciclosEnPantalla - tSeg * (5.2 + vIdx) + onda.fase) * 0.75 +
+                        Math.sin(u * Math.PI * 4 * ciclosEnPantalla - tSeg * 3.0) * 0.25;
+
+                    let muestraReal = 0;
+                    if (bufferAudio && bufferAudio.length > 0) {
+                        const bIdx = Math.min(bufferAudio.length - 1, Math.floor(u * bufferAudio.length));
+                        muestraReal = Number(bufferAudio[bIdx]) || 0;
+                    }
+
+                    const desplazY = (senoidal * 5.2 * onda.amp + muestraReal * 10) * factorVolumenUsuario * (0.35 + 0.65 * envolvente);
+                    const py = yCentro + desplazY;
+                    if (px === 0) oscCtx.moveTo(px, py);
+                    else oscCtx.lineTo(px, py);
+                }
+                oscCtx.stroke();
+                oscCtx.restore();
+            }
+        }
+
+        function iniciarAnimacionSuave60FPS() {
+            if (animacionCursor60FPS) cancelAnimationFrame(animacionCursor60FPS);
+            function frame(ahora) {
+                if (reproduciendo && !arrastrandoMapa) {
+                    const t = Math.min(1, (ahora - timestampInicioPaso) / intervaloPulsoMs);
+                    const ix = posicionAnteriorPaso.x + (objetivoLider.x - posicionAnteriorPaso.x) * t;
+                    const iy = posicionAnteriorPaso.y + (objetivoLider.y - posicionAnteriorPaso.y) * t;
+                    posicionSuaveLider.x = ix;
+                    posicionSuaveLider.y = iy;
+                    dibujarMicroCursorEnOverlay(ix, iy);
+                }
+                dibujarOsciloscopioCuatroOndas(ahora);
+                animacionCursor60FPS = requestAnimationFrame(frame);
+            }
+            animacionCursor60FPS = requestAnimationFrame(frame);
+        }
+
+        /* =======================================================================================
+         * BLOCK 4: RGB->HSL ANALYTICAL ENGINE (14 NEWTON COLORS)
+         * ======================================================================================= */
+
+        function rgbAhsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0;
+            const l = (max + min) / 2;
+            if (max !== min) {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+        }
+
+        function obtenerIndiceNewton14PorHue(h) {
+            const hueNorm = ((h % 360) + 360) % 360;
+            for (let i = 0; i < ESCALA_NEWTON_14.length; i++) {
+                if (hueNorm >= ESCALA_NEWTON_14[i].hMin && hueNorm <= ESCALA_NEWTON_14[i].hMax) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        function clasificarPixelNASA(x, y, desfaseSemilla = 0) {
+            const W = canvas.width;
+            const H = canvas.height;
+            const px = Math.max(3, Math.min(W - 4, Math.floor(x)));
+            const py = Math.max(3, Math.min(H - 4, Math.floor(y)));
+
+            let imgData = null;
+            try {
+                imgData = ctx.getImageData(px - 2, py - 2, 5, 5).data;
+            } catch (e) {
+                imgData = null;
+            }
+
+            let sumaS = 0, sumaL = 0;
+            let maxPeso = 0, hDominante = 0, maxS = 0;
+            let rDom = 34, gDom = 211, bDom = 238;
+            let countBlanco = 0, countOscuro = 0, countCromatico = 0;
+            const totalPixeles = 25;
+
+            if (imgData) {
+                for (let i = 0; i < imgData.length; i += 4) {
+                    const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2];
+                    const [ph, ps, pl] = rgbAhsl(r, g, b);
+                    sumaS += ps; sumaL += pl;
+                    if (ps > maxS) maxS = ps;
+                    if (pl >= 76 && ps < 20) countBlanco++;
+                    else if (pl < 16) countOscuro++;
+                    else if (ps >= 12) countCromatico++;
+
+                    const peso = (ps >= 10 && pl >= 10 && pl <= 94) ? (ps * 2.5 + 8) : (pl * 0.2);
+                    if (peso > maxPeso) {
+                        maxPeso = peso;
+                        hDominante = ph;
+                        rDom = r; gDom = g; bDom = b;
+                    }
+                }
+            }
+
+            const sPromedio = Math.round(sumaS / totalPixeles);
+            const lPromedio = Math.round(sumaL / totalPixeles);
+            const hFinal = hDominante;
+            const sFinal = Math.max(sPromedio, Math.round(maxS * 0.9));
+            const lFinal = lPromedio;
+
+            const sectorEspacial =
+                Math.floor((px / W) * 5) +
+                Math.floor((py / H) * 3) +
+                pasoActual + desfaseSemilla;
+
+            let indiceNewton14 = 0;
+            const predominaBlanco = countBlanco >= 14;
+            const predominaOscuro = countOscuro >= 15;
+            const predominaCromatico = countCromatico >= 3;
+
+            if (predominaCromatico && maxS >= 12) {
+                indiceNewton14 = obtenerIndiceNewton14PorHue(hFinal);
+            } else if (predominaBlanco) {
+                const progBlanca = [0, 4, 6, 8, 10, 5, 2, 12];
+                indiceNewton14 = progBlanca[sectorEspacial % progBlanca.length];
+            } else if (predominaOscuro) {
+                const progOscura = [10, 11, 12, 8, 6, 2, 0, 4];
+                indiceNewton14 = progOscura[sectorEspacial % progOscura.length];
+            } else {
+                indiceNewton14 = obtenerIndiceNewton14PorHue(hFinal);
+            }
+
+            const datosNewton = ESCALA_NEWTON_14[indiceNewton14];
+            const idxNota = (Math.floor(lFinal / 18) + Math.floor(px / 48) + Math.floor(py / 48) + pasoActual + desfaseSemilla) % datosNewton.notasMelodia.length;
+            const notaPrincipal = datosNewton.notasMelodia[idxNota];
+            const enFronteraDeColor = maxS >= 22 && sPromedio < 12;
+
+            let eventoLSC = "todo_normal";
+            let variableTexto = "Neutral / Stable Tone";
+
+            if (((hFinal >= 0 && hFinal <= 22) || hFinal >= 340) && sFinal >= 35 && lFinal >= 15) {
+                eventoLSC = "incendio_activo";
+                variableTexto = "Intense Warm Red Tone";
+            } else if (hFinal >= 78 && hFinal <= 164 && sFinal >= 15 && lFinal >= 12) {
+                eventoLSC = "bosque_sano";
+                variableTexto = "Green / Vegetation Tone";
+            } else if (hFinal >= 165 && hFinal <= 265 && sFinal >= 13) {
+                eventoLSC = "agua_abundante";
+                variableTexto = "Blue / Cyan Tone";
+            }
+
+            return {
+                x: px, y: py, h: hFinal, s: sFinal, l: lFinal,
+                rgbHex: `rgb(${rDom}, ${gDom}, ${bDom})`,
+                indiceNewton14,
+                enFronteraDeColor,
+                datosNewton,
+                notaPrincipal,
+                eventoLSC,
+                variableTexto
+            };
+        }
+
+        function analizarMatrizGlobalMapa() {
+            const W = canvas.width;
+            const H = canvas.height;
+            let data = null;
+            try {
+                data = ctx.getImageData(0, 0, W, H).data;
+            } catch (e) {
+                return;
+            }
+            let warm = 0, neutral = 0, cold = 0, total = 0;
+
+            for (let i = 0; i < data.length; i += 64) {
+                const [h] = rgbAhsl(data[i], data[i + 1], data[i + 2]);
+                total++;
+                if (h <= 68 || h >= 300) warm++;
+                else if (h > 68 && h < 168) neutral++;
+                else cold++;
+            }
+
+            const warmPct = ((warm / total) * 100).toFixed(1);
+            const neutralPct = ((neutral / total) * 100).toFixed(1);
+            const coldPct = Math.max(0, (100 - parseFloat(warmPct) - parseFloat(neutralPct))).toFixed(1);
+
+            estadisticasMapa = { warmPct: Number(warmPct), neutralPct: Number(neutralPct), coldPct: Number(coldPct) };
+        }
+
+        /* =======================================================================================
+         * BLOCK 5: 4-LAYER ACOUSTIC ENGINE WITH INDEPENDENT CONTROL PER CURSOR
+         * ======================================================================================= */
+
+        const CDN_SOUNDFONT = "https://gleitz.github.io/midi-js-soundfonts/MusyngKite/";
+
+        Tone.Destination.volume.value = 3;
+        const limitadorMaestro = new Tone.Limiter(-0.3).toDestination();
+        const masterGain = new Tone.Gain(2.1).connect(limitadorMaestro);
+        const pannerMRU = new Tone.Panner(0).connect(masterGain);
+
+        const analyserSoprano = new Tone.Analyser("waveform", 128);
+        const analyserContralto = new Tone.Analyser("waveform", 128);
+        const analyserTenor = new Tone.Analyser("waveform", 128);
+        const analyserBajo = new Tone.Analyser("waveform", 128);
+
+        const busFondo = new Tone.Gain(0.32).connect(pannerMRU);
+        const gainCursorS = new Tone.Gain(1.35).connect(analyserSoprano).connect(pannerMRU);
+        const gainCursorA = new Tone.Gain(0.90).connect(analyserContralto).connect(pannerMRU);
+        const gainCursorT = new Tone.Gain(0.85).connect(analyserTenor).connect(pannerMRU);
+        const gainCursorB = new Tone.Gain(0.95).connect(analyserBajo).connect(pannerMRU);
+
+        const pluckSoprano = new Tone.PluckSynth({ attackNoise: 0.9, dampening: 3600, resonance: 0.95 }).connect(gainCursorS);
+        const pluckContralto = new Tone.PluckSynth({ attackNoise: 0.8, dampening: 3400, resonance: 0.94 }).connect(gainCursorA);
+        const pluckTenor = new Tone.PluckSynth({ attackNoise: 0.8, dampening: 3200, resonance: 0.94 }).connect(gainCursorT);
+        const pluckFondo = new Tone.PluckSynth({ attackNoise: 0.7, dampening: 3000, resonance: 0.92 }).connect(busFondo);
+
+        let samplerFondo = null, fondoListo = false, instrumentoFondoActual = "acoustic_grand_piano-mp3";
+        let samplerColor = null, colorListo = false, instrumentoColorActual = "auto_sinfonica";
+        let samplerZampona = null, zamponaListo = false;
+        let samplerCharango = null, charangoListo = false;
+        let samplerMaderas = null, maderasListo = false;
+        let samplerArpa = null, arpaListo = false;
+        let samplerTenor = null, tenorListo = false;
+        let samplerBajo = null, bajoListo = false, instrumentoBajoActual = "contrabass-mp3";
+
+        const URLS_SAMPLER = {
+            "C2": "C2.mp3", "F2": "F2.mp3",
+            "C3": "C3.mp3", "F3": "F3.mp3",
+            "C4": "C4.mp3", "F4": "F4.mp3", "A4": "A4.mp3",
+            "C5": "C5.mp3", "D5": "D5.mp3", "F5": "F5.mp3"
+        };
+
+        const NOMBRES_FONDO = {
+            "acoustic_grand_piano-mp3": "🎹 Soft Piano",
+            "pan_flute-mp3": "🏔️ Andean Pan Flute",
+            "acoustic_guitar_nylon-mp3": "🪕 Charango/Andean Guitar",
+            "orchestral_harp-mp3": "🎐 Andean Harp",
+            "marimba-mp3": "🪵 Soft Marimba",
+            "string_ensemble_1-mp3": "🎻 Soft Strings"
+        };
+
+        function actualizarGananciaCursor(vozId) {
+            const cfg = controlVocesSATB[vozId];
+            const gainEfectivo = cfg.muted ? 0 : (cfg.volPct / 100) * cfg.baseGain;
+            const mapaNodos = { S: gainCursorS, A: gainCursorA, T: gainCursorT, B: gainCursorB };
+            const nodo = mapaNodos[vozId];
+            if (nodo) nodo.gain.rampTo(gainEfectivo, 0.06);
+
+            const btnMute = document.getElementById(`btnMute${vozId}`);
+            const slider = document.getElementById(`sliderVol${vozId}`);
+            const card = document.getElementById(`cardCursor${vozId}`);
+            if (slider) slider.value = String(cfg.volPct);
+            if (btnMute) {
+                btnMute.innerHTML = `${cfg.muted || cfg.volPct === 0 ? "🔇" : "🔊"} <span id="valVol${vozId}">${cfg.muted ? "MUTE" : cfg.volPct + "%"}</span>`;
+            }
+            if (card) {
+                card.style.opacity = (cfg.muted || cfg.volPct === 0) ? "0.52" : "1";
+            }
+        }
+
+        function actualizarGananciaFondo(pct) {
+            volFondoPct = Math.max(0, Math.min(100, Number(pct)));
+            busFondo.gain.rampTo((volFondoPct / 100) * 0.9, 0.08);
+            const lbl = document.getElementById("labelVolFondo");
+            if (lbl) lbl.textContent = `${volFondoPct}%`;
+        }
+
+        function actualizarNivelSuavizado(nuevoValor) {
+            nivelSuavizado = Math.max(0, Math.min(100, Math.round(Number(nuevoValor))));
+            const slider = document.getElementById("sliderSuavizado");
+            const lbl = document.getElementById("labelSuavizado");
+            if (slider) slider.value = String(nivelSuavizado);
+
+            let modoTxt = "Bal.";
+            if (nivelSuavizado <= 15) modoTxt = "Direct";
+            else if (nivelSuavizado >= 65) modoTxt = "Silky";
+            if (lbl) lbl.textContent = `${nivelSuavizado}% · ${modoTxt}`;
+
+            const releaseDinamico = 1.0 + (nivelSuavizado / 100) * 1.2;
+            const attackDinamico = 0.005 + (nivelSuavizado / 100) * 0.085;
+
+            [samplerFondo, samplerColor, samplerZampona, samplerCharango, samplerMaderas,
+                samplerArpa, samplerTenor, samplerBajo].forEach((s) => {
+                    if (!s) return;
+                    try { s.release = releaseDinamico; } catch (e) { }
+                    try { s.attack = attackDinamico; } catch (e) { }
+                });
+        }
+
+        function aplicarSuavizadoGradoNewton14(indiceBruto) {
+            if (indiceSuavizadoAnterior14 === null) {
+                indiceSuavizadoAnterior14 = indiceBruto;
+                return indiceBruto;
+            }
+
+            let diff = indiceBruto - indiceSuavizadoAnterior14;
+            if (diff > 7) diff -= 14;
+            if (diff < -7) diff += 14;
+
+            const maxPasoGrados = 4;
+
+            if (Math.abs(diff) <= maxPasoGrados) {
+                indiceSuavizadoAnterior14 = indiceBruto;
+            } else {
+                const paso = Math.sign(diff) * maxPasoGrados;
+                indiceSuavizadoAnterior14 = (indiceSuavizadoAnterior14 + paso + 14) % 14;
+            }
+            return indiceSuavizadoAnterior14;
+        }
+
+        function subirOctavas(nota, n) {
+            const match = String(nota).match(/^([A-G]#?)(\d)$/);
+            if (!match) return nota;
+            const nuevaOct = Math.max(1, Math.min(6, parseInt(match[2]) + n));
+            return `${match[1]}${nuevaOct}`;
+        }
+
+        let ultimaNotaSopranoMidi = 67;
+
+        function elegirNotaConVoiceLeading(notasCandidatas, muestra) {
+            if (nivelSuavizado <= 15) {
+                const idxDirecto = Math.min(
+                    notasCandidatas.length - 1,
+                    Math.floor(((muestra.l + (pasoActual % 3) * 22) % 100) / (100 / notasCandidatas.length))
+                );
+                const notaElegida = notasCandidatas[idxDirecto];
+                ultimaNotaSopranoMidi = Tone.Frequency(notaElegida).toMidi();
+                return notaElegida;
+            }
+
+            let mejorNota = notasCandidatas[0];
+            let menorCosto = Infinity;
+
+            const sesgoLuz = Math.floor((muestra.l / 100) * notasCandidatas.length);
+            const pesoColor = 0.9 - (nivelSuavizado / 100) * 0.40;
+            const pesoVoice = 0.15 + (nivelSuavizado / 100) * 0.35;
+
+            notasCandidatas.forEach((nota, idx) => {
+                const midi = Tone.Frequency(nota).toMidi();
+                const distSemitonos = Math.abs(midi - ultimaNotaSopranoMidi);
+                const penalizacionRep = (distSemitonos === 0) ? 2.8 : 0;
+                const cercaniaLuz = Math.abs(idx - sesgoLuz) * pesoColor;
+                const costoVoice = distSemitonos * pesoVoice;
+                const costo = cercaniaLuz + costoVoice + penalizacionRep;
+                if (costo < menorCosto) {
+                    menorCosto = costo;
+                    mejorNota = nota;
+                }
+            });
+            ultimaNotaSopranoMidi = Tone.Frequency(mejorNota).toMidi();
+            return mejorNota;
+        }
+
+        function cargarInstrumentoFondo(instrumentoCarpeta = "acoustic_grand_piano-mp3") {
+            instrumentoFondoActual = instrumentoCarpeta;
+            fondoListo = false;
+            if (samplerFondo) { try { samplerFondo.dispose(); } catch (e) { } samplerFondo = null; }
+            try {
+                samplerFondo = new Tone.Sampler({
+                    urls: URLS_SAMPLER, attack: 0.03, release: 2.5,
+                    baseUrl: `${CDN_SOUNDFONT}${instrumentoCarpeta}/`,
+                    onload: () => { fondoListo = true; actualizarIndicadorEstadoAudio(audioListo); }
+                }).connect(busFondo);
+                samplerFondo.volume.value = -6;
+            } catch (e) { }
+        }
+
+        function cargarCapaColor(instrumento = "auto_sinfonica") {
+            instrumentoColorActual = instrumento;
+            const carpetaPrincipal = (instrumento === "auto_sinfonica") ? "vibraphone-mp3" : instrumento;
+            if (samplerColor) { try { samplerColor.dispose(); } catch (e) { } samplerColor = null; }
+            colorListo = false;
+            try {
+                samplerColor = new Tone.Sampler({
+                    urls: URLS_SAMPLER, attack: 0.01, release: 2.6,
+                    baseUrl: `${CDN_SOUNDFONT}${carpetaPrincipal}/`,
+                    onload: () => { colorListo = true; }
+                }).connect(gainCursorS);
+                samplerColor.volume.value = 3;
+            } catch (e) { }
+
+            if (!samplerZampona) {
+                try {
+                    samplerZampona = new Tone.Sampler({
+                        urls: URLS_SAMPLER, attack: 0.02, release: 2.4,
+                        baseUrl: `${CDN_SOUNDFONT}pan_flute-mp3/`,
+                        onload: () => { zamponaListo = true; }
+                    }).connect(gainCursorS);
+                    samplerZampona.volume.value = 4;
+                } catch (e) { }
+            }
+            if (!samplerCharango) {
+                try {
+                    samplerCharango = new Tone.Sampler({
+                        urls: URLS_SAMPLER, attack: 0.01, release: 2.3,
+                        baseUrl: `${CDN_SOUNDFONT}acoustic_guitar_steel-mp3/`,
+                        onload: () => { charangoListo = true; }
+                    }).connect(gainCursorS);
+                    samplerCharango.volume.value = 3;
+                } catch (e) { }
+            }
+            if (!samplerMaderas) {
+                try {
+                    samplerMaderas = new Tone.Sampler({
+                        urls: URLS_SAMPLER, attack: 0.02, release: 2.4,
+                        baseUrl: `${CDN_SOUNDFONT}flute-mp3/`,
+                        onload: () => { maderasListo = true; }
+                    }).connect(gainCursorS);
+                    samplerMaderas.volume.value = 3;
+                } catch (e) { }
+            }
+            if (!samplerArpa) {
+                try {
+                    samplerArpa = new Tone.Sampler({
+                        urls: URLS_SAMPLER, attack: 0.01, release: 2.6,
+                        baseUrl: `${CDN_SOUNDFONT}orchestral_harp-mp3/`,
+                        onload: () => { arpaListo = true; }
+                    }).connect(gainCursorA);
+                    samplerArpa.volume.value = 2;
+                } catch (e) { }
+            }
+            if (!samplerTenor) {
+                try {
+                    samplerTenor = new Tone.Sampler({
+                        urls: URLS_SAMPLER, attack: 0.01, release: 2.4,
+                        baseUrl: `${CDN_SOUNDFONT}marimba-mp3/`,
+                        onload: () => { tenorListo = true; }
+                    }).connect(gainCursorT);
+                    samplerTenor.volume.value = 2;
+                } catch (e) { }
+            }
+        }
+
+        function cargarBajo(instrumento = "contrabass-mp3") {
+            instrumentoBajoActual = instrumento;
+            if (samplerBajo) { try { samplerBajo.dispose(); } catch (e) { } samplerBajo = null; }
+            bajoListo = false;
+            try {
+                samplerBajo = new Tone.Sampler({
+                    urls: URLS_SAMPLER, attack: 0.03, release: 2.5,
+                    baseUrl: `${CDN_SOUNDFONT}${instrumento}/`,
+                    onload: () => { bajoListo = true; }
+                }).connect(gainCursorB);
+                samplerBajo.volume.value = 2;
+            } catch (e) { }
+        }
+
+        function dispararVozInstrumento(notasArray, duracion, velocidad, destinoVoz, retardoSeg = 0) {
+            if (!audioListo) return;
+            const notasUnicas = [...new Set(notasArray)].slice(0, 4);
+            const tDisparo = Tone.now() + retardoSeg;
+            try {
+                if (destinoVoz === "fondo") {
+                    if (volFondoPct === 0) return;
+                    if (fondoListo && samplerFondo) samplerFondo.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckFondo.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "soprano_zampona") {
+                    if (zamponaListo && samplerZampona) samplerZampona.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else if (colorListo && samplerColor) samplerColor.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckSoprano.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "soprano_charango") {
+                    if (charangoListo && samplerCharango) samplerCharango.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else if (colorListo && samplerColor) samplerColor.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckSoprano.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "soprano_maderas") {
+                    if (maderasListo && samplerMaderas) samplerMaderas.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else if (colorListo && samplerColor) samplerColor.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckSoprano.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "soprano_color") {
+                    if (colorListo && samplerColor) samplerColor.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckSoprano.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "contralto") {
+                    if (arpaListo && samplerArpa) samplerArpa.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckContralto.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "tenor") {
+                    if (tenorListo && samplerTenor) samplerTenor.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                    else pluckTenor.triggerAttack(notasUnicas[0], tDisparo);
+                } else if (destinoVoz === "bajo") {
+                    if (bajoListo && samplerBajo) samplerBajo.triggerAttackRelease(notasUnicas, duracion, tDisparo, velocidad);
+                }
+            } catch (e) { }
+        }
+
+        async function inicializarMotorAcusticoNatural() {
+            try {
+                if (!samplerFondo) cargarInstrumentoFondo(instrumentoFondoActual);
+                if (!samplerColor) cargarCapaColor(instrumentoColorActual);
+                if (!samplerBajo) cargarBajo(instrumentoBajoActual);
+
+                if (Tone.context.state !== "running") {
+                    await Tone.start();
+                    await Tone.context.resume();
+                }
+                if (Tone.context.state === "running") {
+                    audioListo = true;
+                    actualizarIndicadorEstadoAudio(true);
+                }
+            } catch (err) { }
+        }
+
+        function actualizarIndicadorEstadoAudio(activo) {
+            const badge = document.getElementById("badgeEstadoAudio");
+            const texto = document.getElementById("textoEstadoAudio");
+            const nombreFondo = NOMBRES_FONDO[instrumentoFondoActual] || "🎹 Soft Piano";
+            if (activo) {
+                badge.className = "text-[11px] font-mono-tech font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 flex items-center gap-1.5";
+                texto.textContent = `LIVE · BACKGROUND: ${nombreFondo.toUpperCase()} + 4 SATB VOICES`;
+            } else {
+                badge.className = "text-[11px] font-mono-tech font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/50 flex items-center gap-1.5";
+                texto.textContent = "TOUR ACTIVE (Click or press a key to enable audio)";
+            }
+        }
+
+        let indiceColorActual14 = 0;
+
+        function tocarSonidoNaturalAgradable(muestrasVoces, indicePaso) {
+            const mSoprano = muestrasVoces[0];
+            const mContralto = muestrasVoces[1] || mSoprano;
+            const mTenor = muestrasVoces[2] || mSoprano;
+            const mBajo = muestrasVoces[3] || mSoprano;
+
+            let deltaCromatico = 18;
+            if (hslSuavizadoAnterior) {
+                const dh = Math.abs(((mSoprano.h - hslSuavizadoAnterior.h + 540) % 360) - 180);
+                const ds = Math.abs(mSoprano.s - hslSuavizadoAnterior.s);
+                const dl = Math.abs(mSoprano.l - hslSuavizadoAnterior.l);
+                deltaCromatico = dh * 0.9 + ds * 0.5 + dl * 0.6;
+            }
+            hslSuavizadoAnterior = { h: mSoprano.h, s: mSoprano.s, l: mSoprano.l };
+
+            indiceColorActual14 = aplicarSuavizadoGradoNewton14(mSoprano.indiceNewton14);
+            const escalaSoprano = ESCALA_NEWTON_14[indiceColorActual14];
+            const escalaContralto = mContralto.datosNewton;
+            const escalaTenor = mTenor.datosNewton;
+            const escalaBajo = mBajo.datosNewton;
+
+            const notaSoprano = elegirNotaConVoiceLeading(escalaSoprano.notasMelodia, mSoprano);
+            const notaContralto = escalaContralto.acorde[(indicePaso + 1) % escalaContralto.acorde.length];
+            const notaTenor = escalaTenor.acorde[(indicePaso + 2) % escalaTenor.acorde.length];
+            const notaBajo = (indicePaso % 4 === 0) ? escalaBajo.bajo : escalaBajo.quinta;
+
+            const fS = Math.round(Tone.Frequency(notaSoprano).toFrequency());
+            const fA = Math.round(Tone.Frequency(notaContralto).toFrequency());
+            const fT = Math.round(Tone.Frequency(notaTenor).toFrequency());
+            const fB = Math.round(Tone.Frequency(notaBajo).toFrequency());
+
+            estadoOndasSATB[0].nota = notaSoprano; estadoOndasSATB[0].freqHz = fS; estadoOndasSATB[0].amp = 0.65 + (mSoprano.l / 100) * 0.40;
+            estadoOndasSATB[1].nota = notaContralto; estadoOndasSATB[1].freqHz = fA; estadoOndasSATB[1].amp = 0.55 + (mContralto.l / 100) * 0.35;
+            estadoOndasSATB[2].nota = notaTenor; estadoOndasSATB[2].freqHz = fT; estadoOndasSATB[2].amp = 0.55 + (mTenor.l / 100) * 0.35;
+            estadoOndasSATB[3].nota = notaBajo; estadoOndasSATB[3].freqHz = fB; estadoOndasSATB[3].amp = 0.65 + (mBajo.l / 100) * 0.35;
+
+            document.getElementById("oscFreqS").textContent = `${fS} Hz (${notaSoprano}) · ${escalaSoprano.nombre.split("·")[0].trim()}`;
+            document.getElementById("oscFreqA").textContent = `${fA} Hz (${notaContralto}) · ${escalaContralto.nombre.split("·")[0].trim()}`;
+            document.getElementById("oscFreqT").textContent = `${fT} Hz (${notaTenor}) · ${escalaTenor.nombre.split("·")[0].trim()}`;
+            document.getElementById("oscFreqB").textContent = `${fB} Hz (${notaBajo}) · ${escalaBajo.nombre.split("·")[0].trim()}`;
+
+            if (!audioListo) return;
+
+            const tiempoRampaPan = 0.08 + (nivelSuavizado / 100) * 0.55;
+            const panValor = Math.max(-0.70, Math.min(0.70, (mSoprano.x / canvas.width) * 1.4 - 0.70));
+            pannerMRU.pan.rampTo(panValor, tiempoRampaPan);
+
+            const factorCambio = deltaCromatico >= 12 ? (1.06 - (nivelSuavizado / 100) * 0.14) : 0.90;
+            const velSolista = Math.max(0.72, Math.min(0.99, (0.76 + (mSoprano.l / 100) * 0.20) * factorCambio));
+
+            const durSolista = nivelSuavizado <= 15 ? "8n" : "4n";
+            const durCoro = nivelSuavizado <= 15 ? "16n" : "8n";
+
+            // 0. BACKGROUND
+            const patronOstinato = [0, 1, 2, 1][indicePaso % 4];
+            const notaFondo1 = escalaSoprano.acorde[patronOstinato % escalaSoprano.acorde.length];
+            const notaFondo2 = escalaSoprano.acorde[(patronOstinato + 1) % escalaSoprano.acorde.length];
+            dispararVozInstrumento([notaFondo1, notaFondo2], "4n", 0.42, "fondo", 0);
+
+            // 1. CURSOR 1: SOPRANO
+            if (!controlVocesSATB.S.muted && controlVocesSATB.S.volPct > 0) {
+                let destinoSoprano = "soprano_color";
+                if (instrumentoColorActual === "auto_sinfonica") {
+                    if (escalaSoprano.familiaSolista === "zampona") destinoSoprano = "soprano_zampona";
+                    else if (escalaSoprano.familiaSolista === "charango") destinoSoprano = "soprano_charango";
+                    else if (escalaSoprano.familiaSolista === "maderas") destinoSoprano = "soprano_maderas";
+                    else destinoSoprano = "soprano_color";
+                }
+                const esFamiliaBrillante = ["zampona", "charango", "maderas", "metales"].includes(escalaSoprano.familiaSolista);
+                const octavaBrillo = esFamiliaBrillante ? 2 : 1;
+                const notaBrillo = subirOctavas(notaSoprano, octavaBrillo);
+                dispararVozInstrumento([notaSoprano, notaBrillo], durSolista, velSolista, destinoSoprano, 0);
+            }
+
+            // 2. CONTRALTO
+            if (!controlVocesSATB.A.muted && controlVocesSATB.A.volPct > 0) {
+                dispararVozInstrumento([notaContralto], durCoro, velSolista * 0.78, "contralto", 0.14);
+            }
+
+            // 3. TENOR
+            if (!controlVocesSATB.T.muted && controlVocesSATB.T.volPct > 0) {
+                dispararVozInstrumento([notaTenor], durCoro, velSolista * 0.74, "tenor", 0.27);
+            }
+
+            // 4. BASS
+            if (!controlVocesSATB.B.muted && controlVocesSATB.B.volPct > 0 && indicePaso % 2 === 0) {
+                dispararVozInstrumento([notaBajo], "4n", velSolista * 0.82, "bajo", 0);
+            }
+        }
+
+        function obtenerCoordenadasSegunModo(paso, total) {
+            const W = canvas.width;
+            const H = canvas.height;
+            const progreso = paso / total;
+
+            if (modoRecorrido === 1) {
+                const alturas = [Math.floor(H * 0.28), Math.floor(H * 0.50), Math.floor(H * 0.72)];
+                const filaActiva = Math.min(2, Math.floor(progreso * 3));
+                const progFila = (progreso * 3) - filaActiva;
+                const progX = (filaActiva % 2 === 1) ? (1 - progFila) : progFila;
+                const x = Math.floor(16 + progX * (W - 32));
+                let y = alturas[filaActiva];
+                if (progFila > 0.90 && filaActiva < 2) {
+                    const tCurva = (progFila - 0.90) / 0.10;
+                    y = Math.round(alturas[filaActiva] + (alturas[filaActiva + 1] - alturas[filaActiva]) * tCurva);
+                }
+                return {
+                    x, y,
+                    movimientoNombre: "1. MRU Multitrack (N/E/S)",
+                    voces: construirRacimoVocesCompacto(x, y)
+                };
+            } else if (modoRecorrido === 2) {
+                const x = Math.floor(16 + progreso * (W - 32));
+                const y = Math.floor(H / 2 + Math.sin(progreso * Math.PI * 4) * (H * 0.26));
+                return { x, y, movimientoNombre: "2. ISS Orbital Spiral", voces: construirRacimoVocesCompacto(x, y) };
+            } else {
+                let movTexto = "Movement I";
+                if (progreso >= 0.75) movTexto = "Movement IV";
+                else if (progreso >= 0.50) movTexto = "Movement III";
+                else if (progreso >= 0.25) movTexto = "Movement II";
+
+                const angulo = progreso * Math.PI * 6;
+                const radio = (0.10 + 0.28 * progreso) * Math.min(W, H);
+                const x = Math.max(16, Math.min(W - 16, Math.floor(W / 2 + Math.cos(angulo) * radio)));
+                const y = Math.max(16, Math.min(H - 16, Math.floor(H / 2 + Math.sin(angulo) * radio)));
+                return {
+                    x, y,
+                    movimientoNombre: `3. Four Movements · ${movTexto}`,
+                    voces: construirRacimoVocesCompacto(x, y)
+                };
+            }
+        }
+
+        /* =======================================================================================
+         * BLOCK 6: NARRATOR (TTS) + ARIA READER
+         * ======================================================================================= */
+
+        function anunciarPorVozYLector(texto) {
+            const live = document.getElementById("lectorPantalla");
+            if (live) live.textContent = texto;
+            if (!vozActiva || !("speechSynthesis" in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(texto);
+                u.lang = "en-US";
+                u.rate = 1.02;
+                window.speechSynthesis.speak(u);
+            } catch (e) { }
+        }
+
+        function anunciarResumenRecorridoAlEmpezar() {
+            if (archivoSubidoPorUsuario) return;
+            const escena = ESCENAS_NASA_SVS[indiceEscenaActual];
+            anunciarPorVozYLector(`Projecting ${escena.titulo}. ${escena.descripcion || ""}`);
+        }
+
+        function alternarVozNarrador() {
+            vozActiva = !vozActiva;
+            if (!vozActiva && "speechSynthesis" in window) window.speechSynthesis.cancel();
+            document.getElementById("btnVoz").textContent = `🔊 Voice: ${vozActiva ? "ON" : "OFF"} (V)`;
+        }
+
+        /* =======================================================================================
+         * BLOCK 7: LSC
+         * ======================================================================================= */
+
+        function actualizarPanelLSC(claveLSC) {
+            const datos = BASE_DATOS_LSC[claveLSC] || BASE_DATOS_LSC.todo_normal;
+            document.getElementById("nombreArchivoLSC").textContent = datos.archivo;
+            document.getElementById("emojiLSC").textContent = datos.emoji;
+            document.getElementById("lscSvgStage").innerHTML = datos.svg;
+            document.getElementById("tonoExpresionLSC").textContent = datos.expresion;
+            document.getElementById("tituloEventoLSC").textContent = datos.titulo.toUpperCase();
+            document.getElementById("glosaLSC").textContent = datos.glosa;
+
+            const videoEl = document.getElementById("reproductorVideoLSC");
+            const tarjetaEl = document.getElementById("tarjetaRespaldoLSC");
+
+            videoEl.onerror = () => {
+                videoEl.classList.add("hidden");
+                tarjetaEl.classList.remove("hidden");
+            };
+            videoEl.onloadeddata = () => {
+                tarjetaEl.classList.add("hidden");
+                videoEl.classList.remove("hidden");
+                videoEl.play().catch(() => { });
+            };
+            videoEl.src = datos.archivo;
+        }
+
+        /* =======================================================================================
+         * BLOCK 8: JUKEBOX FLOW CONTROLLER
+         * ======================================================================================= */
+
+        function actualizarHUDColorVivo(muestra) {
+            const swatch = document.getElementById("swatchColorVivo");
+            const texto = document.getElementById("textoCoordenadasVivo");
+            const escalaActiva = ESCALA_NEWTON_14[indiceColorActual14] || muestra.datosNewton;
+            if (swatch) swatch.style.backgroundColor = escalaActiva.hex || muestra.rgbHex;
+            if (texto) {
+                texto.textContent = `x:${muestra.x} y:${muestra.y} · ${escalaActiva.nombre} (${escalaActiva.timbreNombre})`;
+            }
+        }
+
+        function ejecutarPasoJukebox() {
+            const coords = obtenerCoordenadasSegunModo(pasoActual, totalPasos);
+
+            if (pasoActual === 0) {
+                posicionAnteriorPaso = { x: coords.x, y: coords.y };
+                posicionSuaveLider = { x: coords.x, y: coords.y };
+            } else {
+                posicionAnteriorPaso = { x: posicionSuaveLider.x, y: posicionSuaveLider.y };
+            }
+            objetivoLider = { x: coords.x, y: coords.y };
+            timestampInicioPaso = performance.now();
+
+            dibujarMicroCursorEnOverlay(coords.x, coords.y);
+
+            const muestrasVoces = coords.voces.map((v, idx) => clasificarPixelNASA(v.x, v.y, idx * 2));
+            const muestra = muestrasVoces[0];
+
+            tocarSonidoNaturalAgradable(muestrasVoces, pasoActual);
+            actualizarHUDColorVivo(muestra);
+
+            const porcentaje = Math.min(100, Math.round(((pasoActual + 1) / totalPasos) * 100));
+            document.getElementById("barraProgreso").style.width = `${porcentaje}%`;
+            document.getElementById("badgePasoActual").textContent = `Step ${pasoActual + 1} / ${totalPasos} (${duracionSegundos}s)`;
+            document.getElementById("hudModoCursor").textContent = `${coords.movimientoNombre} · CURSOR ${radioMicroCursor}px`;
+
+            pasoActual++;
+            if (pasoActual >= totalPasos) {
+                pasoActual = 0;
+                if (!archivoSubidoPorUsuario) {
+                    proyectarSiguienteEscenaAleatoria(false);
+                }
+            }
+        }
+
+        function iniciarTemporizadorAutomatico() {
+            if (intervaloJukebox) clearInterval(intervaloJukebox);
+            totalPasos = Math.max(64, Math.round((duracionSegundos * 1000) / intervaloPulsoMs));
+            intervaloJukebox = setInterval(() => {
+                if (reproduciendo) ejecutarPasoJukebox();
+            }, intervaloPulsoMs);
+        }
+
+        async function alternarReproduccionJukebox() {
+            await inicializarMotorAcusticoNatural();
+            reproduciendo = !reproduciendo;
+            document.getElementById("iconoPlayPause").textContent = reproduciendo ? "⏸️" : "▶️";
+            document.getElementById("textoPlayPause").textContent = reproduciendo
+                ? "Pause (Space)"
+                : "Resume (Space)";
+            if (reproduciendo) {
+                iniciarTemporizadorAutomatico();
+            }
+        }
+
+        function proyectarSiguienteEscenaAleatoria(gestoUsuario = false) {
+            if (gestoUsuario) inicializarMotorAcusticoNatural();
+            indiceEscenaActual = (indiceEscenaActual + 1 + Math.floor(Math.random() * 2)) % ESCENAS_NASA_SVS.length;
+            modoRecorrido = Math.floor(Math.random() * 3) + 1;
+            semillaAleatoria = Math.floor(Math.random() * 900) + 1;
+            document.getElementById("selectorModoRecorrido").value = String(modoRecorrido);
+            pasoActual = 0;
+            dibujarEscenaNASA(ESCENAS_NASA_SVS[indiceEscenaActual], semillaAleatoria);
+            actualizarEncabezadoYResumen();
+            anunciarResumenRecorridoAlEmpezar();
+        }
+
+        function seleccionarEscenaManual(idx) {
+            inicializarMotorAcusticoNatural();
+            indiceEscenaActual = idx % ESCENAS_NASA_SVS.length;
+            pasoActual = 0;
+            dibujarEscenaNASA(ESCENAS_NASA_SVS[indiceEscenaActual], semillaAleatoria);
+            actualizarEncabezadoYResumen();
+            anunciarResumenRecorridoAlEmpezar();
+            ejecutarPasoJukebox();
+        }
+
+        function cambiarModoRecorridoManual(valor) {
+            inicializarMotorAcusticoNatural();
+            modoRecorrido = parseInt(valor, 10) || 1;
+            document.getElementById("selectorModoRecorrido").value = String(modoRecorrido);
+            pasoActual = 0;
+            actualizarEncabezadoYResumen();
+        }
+
+        function cambiarDuracionMelodia(valor) {
+            inicializarMotorAcusticoNatural();
+            duracionSegundos = parseInt(valor, 10) || 64;
+            document.getElementById("selectorDuracion").value = String(duracionSegundos);
+            pasoActual = 0;
+            actualizarEncabezadoYResumen();
+            iniciarTemporizadorAutomatico();
+        }
+
+        function cambiarTamanoCursor(valor) {
+            radioMicroCursor = parseInt(valor, 10) || 3;
+            document.getElementById("selectorTamanoCursor").value = String(radioMicroCursor);
+            actualizarEncabezadoYResumen();
+        }
+
+        function actualizarEncabezadoYResumen() {
+            const escena = ESCENAS_NASA_SVS[indiceEscenaActual];
+            if (!archivoSubidoPorUsuario) {
+                document.getElementById("tituloEscenaActual").textContent = escena.titulo;
+
+                if (escena.descripcion) {
+                    document.getElementById("salidaTextoHuggingFace").value = escena.descripcion;
+                    document.getElementById("badgeEstadoHF").textContent = "✅ Local Description";
+                    const elTiempo = document.getElementById("tiempoAnalisisIA");
+                    if (elTiempo) elTiempo.textContent = "Predefined catalog";
+                } else {
+                    document.getElementById("salidaTextoHuggingFace").value = "Description not available in the local database.";
+                    document.getElementById("badgeEstadoHF").textContent = "⚠️ Pending";
+                }
+
+                actualizarPanelLSC(String(escena.id));
+            }
+
+            for (let i = 0; i < ESCENAS_NASA_SVS.length; i++) {
+                const chip = document.getElementById(`chipEscena-${i}`);
+                if (!chip) continue;
+                chip.className = (!archivoSubidoPorUsuario && i === indiceEscenaActual)
+                    ? "svs-chip px-2 py-0.5 rounded text-[11px] font-bold bg-cyan-500/30 text-cyan-200 border border-cyan-400 cursor-pointer"
+                    : "svs-chip px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 cursor-pointer";
+            }
+        }
+
+        async function inspeccionarCoordenadaCliente(clientX, clientY) {
+            await inicializarMotorAcusticoNatural();
+            const rect = canvas.getBoundingClientRect();
+            const escalaX = canvas.width / rect.width;
+            const escalaY = canvas.height / rect.height;
+            const x = Math.floor((clientX - rect.left) * escalaX);
+            const y = Math.floor((clientY - rect.top) * escalaY);
+
+            posicionSuaveLider = { x, y };
+            posicionAnteriorPaso = { x, y };
+            objetivoLider = { x, y };
+
+            dibujarMicroCursorEnOverlay(x, y);
+            const vocesManuales = construirRacimoVocesCompacto(x, y);
+            const muestras = vocesManuales.map((v, i) => clasificarPixelNASA(v.x, v.y, i * 2));
+            tocarSonidoNaturalAgradable(muestras, 0);
+            actualizarHUDColorVivo(muestras[0]);
+        }
+
+        /* =======================================================================================
+         * BLOCK 9: REAL AI VISION IN BROWSER
+         * ======================================================================================= */
+
+        function cargarRecursoMultimediaNASA(evento) {
+            const archivo = evento.target.files?.[0];
+            if (!archivo) return;
+
+            detenerVideoSatelitalSiExiste();
+            archivoSubidoPorUsuario = true;
+            descripcionIADisponible = false;
+            nombreRecursoActual = archivo.name;
+
+            const url = URL.createObjectURL(archivo);
+            const cuadroTexto = document.getElementById("salidaTextoHuggingFace");
+            const badge = document.getElementById("badgeEstadoHF");
+
+            badge.textContent = "⏳ Reading image...";
+            cuadroTexto.value = `⏳ Image "${archivo.name}" loaded. Starting real visual analysis with AI...`;
+
+            if (archivo.type.startsWith("video/")) {
+                const video = document.createElement("video");
+                video.src = url;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.onloadeddata = () => {
+                    videoSatelitalActivo = video;
+                    video.play();
+                    document.getElementById("tituloEscenaActual").textContent = `🎬 Loaded Video: ${archivo.name}`;
+
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    analizarMatrizGlobalMapa();
+                    interpretarRecursoConHuggingFace();
+
+                    const renderFrameVideo = () => {
+                        if (!videoSatelitalActivo) return;
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        animacionVideoId = requestAnimationFrame(renderFrameVideo);
+                    };
+                    renderFrameVideo();
+                };
+            } else {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    analizarMatrizGlobalMapa();
+                    pasoActual = 0;
+                    document.getElementById("tituloEscenaActual").textContent = `🖼️ Loaded Image: ${archivo.name}`;
+                    ejecutarPasoJukebox();
+                    interpretarRecursoConHuggingFace();
+                };
+                img.src = url;
+            }
+
+            evento.target.value = "";
+        }
+
+        function obtenerImagenOptimizadaBase64() {
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = 384;
+            tempCanvas.height = 216;
+            const tCtx = tempCanvas.getContext("2d");
+            tCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+            return tempCanvas.toDataURL("image/jpeg", 0.82);
+        }
+
+        async function analizarConRedNeuronalEnNavegador(dataUrlJPEG, cuadroTexto, badge) {
+            if (!pipelineVisionLocal) {
+                badge.textContent = "⏳ Loading AI Neural Network...";
+                cuadroTexto.value = "⏳ Initializing Hugging Face Vision Neural Network (ViT-GPT2) directly in your browser. This takes a few seconds the first time...";
+
+                const { pipeline, env } = await import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2");
+                env.allowLocalModels = false;
+                env.useBrowserCache = (window.location.protocol !== "file:");
+
+                pipelineVisionLocal = await pipeline("image-to-text", "Xenova/vit-gpt2-image-captioning", {
+                    progress_callback: (prog) => {
+                        if (prog.status === "progress" && typeof prog.progress === "number") {
+                            const pct = Math.round(prog.progress);
+                            badge.textContent = `⏳ Downloading AI (${pct}%)`;
+                            cuadroTexto.value = `⏳ Downloading weights of the AI Vision Neural Network in your browser: ${pct}% completed...`;
+                        }
+                    }
+                });
+            }
+
+            badge.textContent = "🧠 Recognizing objects in image...";
+            cuadroTexto.value = "🧠 The neural network is inspecting real objects and shapes in your image...";
+
+            const resultado = await pipelineVisionLocal(dataUrlJPEG);
+            const captionIngles = resultado?.[0]?.generated_text?.trim() || "";
+            if (!captionIngles) throw new Error("No response obtained from the neural network.");
+
+            return captionIngles.charAt(0).toUpperCase() + captionIngles.slice(1);
+        }
+
+        async function interpretarRecursoConHuggingFace() {
+            const badge = document.getElementById("badgeEstadoHF");
+            const cuadroTexto = document.getElementById("salidaTextoHuggingFace");
+            const etiquetaTiempo = document.getElementById("tiempoAnalisisIA");
+            const inicioMs = performance.now();
+
+            badge.textContent = "⏳ Analyzing real content...";
+            cuadroTexto.value = "⏳ Analyzing the real visual content of the image with Artificial Intelligence...";
+
+            analizarMatrizGlobalMapa();
+            const dataUrlJPEG = obtenerImagenOptimizadaBase64();
+
+            const promptEnglish = "Describe in English clearly, accurately, and directly (in a 35 to 55 word paragraph) what objects, people, landscapes, or phenomena actually appear in this image and what their main colors are.";
+
+            let descripcionRealEn = "";
+            let motorUsado = "";
+
+            try {
+                const respCloud = await fetch("https://text.pollinations.ai/openai", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    referrerPolicy: "no-referrer",
+                    body: JSON.stringify({
+                        model: "openai",
+                        seed: Math.floor(Math.random() * 100000),
+                        messages: [{
+                            role: "user",
+                            content: [
+                                { type: "text", text: promptEnglish },
+                                { type: "image_url", image_url: { url: dataUrlJPEG } }
+                            ]
+                        }]
+                    })
+                });
+
+                if (respCloud.ok) {
+                    const rawText = await respCloud.text();
+                    let candidato = "";
+                    try {
+                        const parsed = JSON.parse(rawText);
+                        candidato = parsed?.choices?.[0]?.message?.content?.trim() || "";
+                    } catch {
+                        candidato = rawText.trim();
+                    }
+
+                    if (
+                        candidato &&
+                        candidato.length > 15 &&
+                        !candidato.toLowerCase().includes("rate limit") &&
+                        !candidato.toLowerCase().includes("bad gateway") &&
+                        !candidato.toLowerCase().startsWith("<!doctype")
+                    ) {
+                        descripcionRealEn = candidato;
+                        motorUsado = "OpenAI Vision Free";
+                    }
+                }
+            } catch (e) { console.warn("Cloud Vision blocked:", e); }
+
+            if (!descripcionRealEn) {
+                try {
+                    const observacionNeuronal = await analizarConRedNeuronalEnNavegador(dataUrlJPEG, cuadroTexto, badge);
+                    const { warmPct, neutralPct, coldPct } = estadisticasMapa;
+                    const matizColor = `with a color balance of ${warmPct}% warm, ${neutralPct}% neutral/green, and ${coldPct}% cold/blue`;
+                    descripcionRealEn = `In the image, we can see: ${observacionNeuronal} (${matizColor}).`;
+                    motorUsado = "ViT-GPT2 Neural Network (Local)";
+                } catch (errNeuronal) {
+                    console.error("Neural network error:", errNeuronal);
+                    badge.textContent = "⚠️ Network Error";
+                    cuadroTexto.value = "⚠️ Could not connect to the vision model. Check your connection.";
+                    return;
+                }
+            }
+
+            const segundos = ((performance.now() - inicioMs) / 1000).toFixed(1);
+            badge.textContent = `✅ ${motorUsado}`;
+            if (etiquetaTiempo) etiquetaTiempo.textContent = `Analyzed with ${motorUsado} in ${segundos}s`;
+
+            ultimaInterpretacionHF = descripcionRealEn;
+            descripcionIADisponible = true;
+            cuadroTexto.value = descripcionRealEn;
+
+            document.getElementById("guionTextoLSC")?.setAttribute("textContent", `"${descripcionRealEn}"`);
+
+            sincronizarLSCConDescripcionIA(descripcionRealEn);
+            anunciarPorVozYLector(descripcionRealEn);
+        }
+
+        function sincronizarLSCConDescripcionIA(textoEn) {
+            const t = textoEn.toLowerCase();
+            if (t.includes("fire") || t.includes("flame") || t.includes("heat") || t.includes("burn")) {
+                ultimoEventoLSC = "incendio_activo";
+                actualizarPanelLSC("incendio_activo");
+            } else if (t.includes("ocean") || t.includes("sea") || t.includes("water") || t.includes("river") || t.includes("beach")) {
+                ultimoEventoLSC = "agua_abundante";
+                actualizarPanelLSC("agua_abundante");
+            } else if (t.includes("forest") || t.includes("tree") || t.includes("plant") || t.includes("grass") || t.includes("field") || t.includes("nature")) {
+                ultimoEventoLSC = "bosque_sano";
+                actualizarPanelLSC("bosque_sano");
+            } else {
+                ultimoEventoLSC = "todo_normal";
+                actualizarPanelLSC("todo_normal");
+            }
+        }
+
+        function bindEventListeners() {
+            const eventosDesbloqueo = ["pointerdown", "mousedown", "mousemove", "keydown", "touchstart"];
+            const desbloquear = async () => {
+                await inicializarMotorAcusticoNatural();
+                if (audioListo) {
+                    eventosDesbloqueo.forEach((ev) => window.removeEventListener(ev, desbloquear));
+                }
+            };
+            eventosDesbloqueo.forEach((ev) => window.addEventListener(ev, desbloquear, { passive: true }));
+
+            canvas.addEventListener("pointerdown", (e) => {
+                arrastrandoMapa = true;
+                inspeccionarCoordenadaCliente(e.clientX, e.clientY);
+            });
+            canvas.addEventListener("pointermove", (e) => {
+                if (!arrastrandoMapa) return;
+                inspeccionarCoordenadaCliente(e.clientX, e.clientY);
+            });
+            window.addEventListener("pointerup", () => {
+                arrastrandoMapa = false;
+            });
+
+            document.getElementById("btnPlayPause").addEventListener("click", alternarReproduccionJukebox);
+            document.getElementById("btnSiguienteEscena").addEventListener("click", () => proyectarSiguienteEscenaAleatoria(true));
+
+            document.getElementById("selectorFondo").addEventListener("change", async (e) => {
+                await inicializarMotorAcusticoNatural();
+                cargarInstrumentoFondo(e.target.value);
+            });
+            document.getElementById("selectorCapaSinfa").addEventListener("change", async (e) => {
+                await inicializarMotorAcusticoNatural();
+                cargarCapaColor(e.target.value);
+            });
+            document.getElementById("selectorBajo").addEventListener("change", async (e) => {
+                await inicializarMotorAcusticoNatural();
+                cargarBajo(e.target.value);
+            });
+            document.getElementById("selectorModoRecorrido").addEventListener("change", (e) => cambiarModoRecorridoManual(e.target.value));
+            document.getElementById("selectorDuracion").addEventListener("change", (e) => cambiarDuracionMelodia(e.target.value));
+            document.getElementById("selectorTamanoCursor").addEventListener("change", (e) => cambiarTamanoCursor(e.target.value));
+            document.getElementById("btnVoz").addEventListener("click", alternarVozNarrador);
+
+            document.getElementById("inputSubirVideoNASA").addEventListener("change", cargarRecursoMultimediaNASA);
+            document.getElementById("btnAnalizarHF").addEventListener("click", interpretarRecursoConHuggingFace);
+
+            document.querySelectorAll(".btn-step-vol").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const voz = btn.dataset.voice;
+                    const delta = parseInt(btn.dataset.delta, 10) || 0;
+                    const cfg = controlVocesSATB[voz];
+                    cfg.volPct = Math.max(0, Math.min(200, cfg.volPct + delta));
+                    actualizarGananciaCursor(voz);
+                });
+            });
+
+            ["S", "A", "T", "B"].forEach((voz) => {
+                const slider = document.getElementById(`sliderVol${voz}`);
+                if (slider) slider.addEventListener("input", (e) => {
+                    controlVocesSATB[voz].volPct = Math.max(0, Math.min(200, parseInt(e.target.value, 10) || 0));
+                    actualizarGananciaCursor(voz);
+                });
+                const btnMute = document.getElementById(`btnMute${voz}`);
+                if (btnMute) btnMute.addEventListener("click", () => {
+                    controlVocesSATB[voz].muted = !controlVocesSATB[voz].muted;
+                    actualizarGananciaCursor(voz);
+                });
+            });
+
+            const sliderFondo = document.getElementById("sliderVolFondo");
+            if (sliderFondo) sliderFondo.addEventListener("input", (e) => actualizarGananciaFondo(e.target.value));
+
+            const sliderSuav = document.getElementById("sliderSuavizado");
+            if (sliderSuav) sliderSuav.addEventListener("input", (e) => actualizarNivelSuavizado(e.target.value));
+            document.getElementById("btnSuavizadoMenos").addEventListener("click", () => actualizarNivelSuavizado(nivelSuavizado - 5));
+            document.getElementById("btnSuavizadoMas").addEventListener("click", () => actualizarNivelSuavizado(nivelSuavizado + 5));
+
+            document.getElementById("btnHablarGuionActual")?.addEventListener("click", () => {
+                const textoParaLeer = (archivoSubidoPorUsuario && descripcionIADisponible)
+                    ? ultimaInterpretacionHF
+                    : (BASE_DATOS_LSC[ultimoEventoLSC]?.guion || "");
+                anunciarPorVozYLector(textoParaLeer);
+            });
+
+            document.querySelectorAll(".svs-chip").forEach((chip) => {
+                chip.addEventListener("click", () => seleccionarEscenaManual(Number(chip.dataset.svsIdx)));
+            });
+
+            window.addEventListener("keydown", (e) => {
+                if (["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
+
+                if (e.code === "Space") {
+                    e.preventDefault();
+                    alternarReproduccionJukebox();
+                } else if (e.key.toLowerCase() === "r") {
+                    e.preventDefault();
+                    proyectarSiguienteEscenaAleatoria(true);
+                } else if (e.key.toLowerCase() === "f") {
+                    e.preventDefault();
+                    const opciones = ["acoustic_grand_piano-mp3", "pan_flute-mp3", "acoustic_guitar_nylon-mp3", "orchestral_harp-mp3", "marimba-mp3", "string_ensemble_1-mp3"];
+                    const sig = opciones[(opciones.indexOf(instrumentoFondoActual) + 1) % opciones.length];
+                    document.getElementById("selectorFondo").value = sig;
+                    cargarInstrumentoFondo(sig);
+                } else if (e.key.toLowerCase() === "m") {
+                    e.preventDefault();
+                    const opciones = ["auto_sinfonica", "pan_flute-mp3", "acoustic_guitar_steel-mp3", "vibraphone-mp3", "orchestral_harp-mp3", "flute-mp3", "celesta-mp3", "marimba-mp3", "cello-mp3"];
+                    const sig = opciones[(opciones.indexOf(instrumentoColorActual) + 1) % opciones.length];
+                    document.getElementById("selectorCapaSinfa").value = sig;
+                    cargarCapaColor(sig);
+                } else if (e.key.toLowerCase() === "b") {
+                    e.preventDefault();
+                    const opciones = ["contrabass-mp3", "cello-mp3", "acoustic_bass-mp3", "tuba-mp3"];
+                    const sig = opciones[(opciones.indexOf(instrumentoBajoActual) + 1) % opciones.length];
+                    document.getElementById("selectorBajo").value = sig;
+                    cargarBajo(sig);
+                } else if (e.key.toLowerCase() === "s") {
+                    e.preventDefault();
+                    const niveles = [0, 25, 50, 75, 100];
+                    const idxActual = niveles.findIndex(n => Math.abs(n - nivelSuavizado) < 13);
+                    const sig = niveles[(idxActual + 1) % niveles.length];
+                    actualizarNivelSuavizado(sig);
+                } else if (e.key.toLowerCase() === "v") {
+                    e.preventDefault();
+                    alternarVozNarrador();
+                } else if (e.key.toLowerCase() === "t") {
+                    e.preventDefault();
+                    const tiempos = [32, 64, 120, 180];
+                    const sig = tiempos[(tiempos.indexOf(duracionSegundos) + 1) % tiempos.length];
+                    cambiarDuracionMelodia(sig);
+                } else if (e.key.toLowerCase() === "c") {
+                    e.preventDefault();
+                    const tamanos = [2, 3, 5];
+                    const sigC = tamanos[(tamanos.indexOf(radioMicroCursor) + 1) % tamanos.length];
+                    cambiarTamanoCursor(sigC);
+                }
+            });
+
+            // LÓGICA DE BOTONES DE TRADUCCIÓN (API Google Translate)
+            document.getElementById('btnTranslateES')?.addEventListener('click', () => {
+                const select = document.querySelector('select.goog-te-combo');
+                if (select) {
+                    select.value = 'es';
+                    select.dispatchEvent(new Event('change'));
+                    document.getElementById('btnTranslateES').classList.add('hidden');
+                    document.getElementById('btnTranslateEN').classList.remove('hidden');
+                }
+            });
+
+            document.getElementById('btnTranslateEN')?.addEventListener('click', () => {
+                const select = document.querySelector('select.goog-te-combo');
+                if (select) {
+                    select.value = 'en';
+                    select.dispatchEvent(new Event('change'));
+                    document.getElementById('btnTranslateEN').classList.add('hidden');
+                    document.getElementById('btnTranslateES').classList.remove('hidden');
+                }
+            });
+        }
+
+        window.onload = async function () {
+            bindEventListeners();
+
+            ["S", "A", "T", "B"].forEach(voz => actualizarGananciaCursor(voz));
+            actualizarGananciaFondo(volFondoPct);
+            actualizarNivelSuavizado(nivelSuavizado);
+
+            try {
+                cargarInstrumentoFondo(instrumentoFondoActual);
+                cargarCapaColor(instrumentoColorActual);
+                cargarBajo(instrumentoBajoActual);
+            } catch (err) {
+                console.warn("[App] Error preloading samplers:", err);
+            }
+
+            indiceEscenaActual = 0;
+            modoRecorrido = 1;
+            document.getElementById("selectorModoRecorrido").value = String(modoRecorrido);
+
+            dibujarEscenaNASA(ESCENAS_NASA_SVS[indiceEscenaActual], semillaAleatoria);
+            actualizarEncabezadoYResumen();
+
+            await inicializarMotorAcusticoNatural();
+            actualizarIndicadorEstadoAudio(audioListo);
+            ejecutarPasoJukebox();
+            iniciarTemporizadorAutomatico();
+            iniciarAnimacionSuave60FPS();
+        };
+    </script>
+</body>
+
+</html>
